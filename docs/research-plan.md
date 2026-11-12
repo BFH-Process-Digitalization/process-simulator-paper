@@ -111,18 +111,17 @@ Run time and memory in Chrome, Firefox and Safari for 1,000 to 100,000 cases, 10
 
 ## 8. Target journals
 
-IF values marked ✓ were read from publisher pages in August 2026; the others must be verified before choosing.
+IF values must be checked on the publisher page (JCR figure) before submission; ✓ marks values read from publisher pages in August 2026.
 
 | Journal | IF | Fit |
 | --- | --- | --- |
-| Decision Support Systems | about 6–7, to verify | Best fit: simulation models from event logs and decision quality |
+| **IEEE Access** (primary) | 4.2 per author, to verify on IEEE page | Broad scope, tool plus computational evaluation; single-round binary review, fast decisions; open-access fee (about USD 2,000, to verify) |
+| Decision Support Systems | about 6–7, to verify | Higher prestige in BPM/IS; simulation models from event logs and decision quality |
 | Expert Systems with Applications | about 7–8, to verify | Computational evaluation, high volume |
 | Information Systems Frontiers | 6.2 ✓ | IS artefact framing; median 34 days to first decision ✓ |
 | Business Process Management Journal | 5.8 ✓ | BPM practice framing; fast first decision ✓ |
-| Computers in Industry | 9.1 ✓ | Needs an industrial application angle |
-| IEEE Access | about 3.5, to verify | Fast fallback; open-access fee |
 
-Recommended: Decision Support Systems first; Expert Systems with Applications or Business Process Management Journal as fallbacks.
+IEEE Access has no major-revision round: the submitted paper must already contain all four experiments, the complete reproducibility package and the threats-to-validity section.
 
 ## 9. Work plan
 
@@ -135,7 +134,7 @@ Recommended: Decision Support Systems first; Expert Systems with Applications or
 | 4 | E3 decision-quality experiment | 4 weeks |
 | 5 | Writing | 4–6 weeks |
 
-About four to six months to submission; review and publication typically another six to twelve months.
+About four to six months to submission. IEEE Access typically decides within weeks; the other journals take six to twelve months to publication.
 
 ## 10. Literature to review
 
