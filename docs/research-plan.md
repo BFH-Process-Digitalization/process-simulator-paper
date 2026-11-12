@@ -2,174 +2,140 @@
 
 Status: draft for author discussion. Nothing in this plan is a result.
 
-## 1. Positioning
+## 1. Contribution
 
-The Process Simulator can be the object of a paper in three different ways. They need different evidence and should not be mixed in one claim.
+A tool paper about the Process Simulator: a BPMN 2.0 discrete-event simulator that runs in the browser and as a Camunda Modeler plugin, with no installation and no server.
 
-| Option | Contribution | Main evidence | Fit |
-| --- | --- | --- | --- |
-| A. Artefact paper | A BPMN-native, browser-based simulator that lets non-specialists compare what-if scenarios correctly | Verification against queueing theory, comparison with an established simulator, usability study | Demo or tool track; short paper |
-| B. Decision-support paper | Simulation as the evaluation step of "what to digitalise and automate next" | Computational experiments plus three to five real process applications | Full journal paper; companion to the PDI paper |
-| C. Teaching paper | Simulation-based learning of process performance (queues, utilisation, variability) | Pre/post test with students, ideally with a control group | Education venue |
+The paper claims a design contribution, not an empirical finding:
 
-**Recommendation: B as the main paper, with A's verification as a required section, and A as an early short tool paper.**
-B builds directly on the PDI framework ("What to Digitalise and Automate Next") and answers its weakest point: the framework ranks digitalisation needs by self-assessed relevance and fulfilment, but says nothing about the operational effect of acting on them.
-C is a separate study and needs its own ethics approval; it is listed in `TASKS.md` as a later option.
+> Business process simulation is rarely used outside specialist teams because tools need installation, separate modelling notations and statistical expertise. The Process Simulator lets non-specialists parameterise a standard BPMN model directly on the diagram and compare what-if scenarios with safeguards that make the comparison statistically sound.
 
-## 2. Research questions (option B)
+Distinguishing features to argue (to be checked against the related tools in §3):
 
-- **RQ1.** How do typical digitalisation and automation interventions change cycle time, waiting time, throughput and cost per case, and how does the effect depend on load, variability and the position of the intervention in the process?
-- **RQ2.** How far does a priority ranking based on self-assessed digitalisation gaps agree with a ranking based on simulated operational effect?
-- **RQ3.** Does a simulation step change which intervention practitioners choose, and how confident they are in that choice?
+- Runs entirely in the browser and inside Camunda Modeler on unchanged BPMN 2.0 files.
+- Parameters set by clicking on the diagram; a scenario stores only its differences from the baseline.
+- Scenario comparison with common random numbers by default.
+- Token playback and waiting-time colouring on the diagram.
+- Working hours, roles, costs and revenue in the same model.
+- Excel and PDF reports; event logs as CSV and XES for process mining tools.
 
-RQ1 is answered with computational experiments, RQ2 with real process applications, RQ3 with a practitioner study.
+## 2. Research questions
 
-## 3. Propositions
+- **RQ1 (correctness).** Does the simulator reproduce known queueing results and agree with an established business process simulator on the same models?
+- **RQ2 (efficiency).** How long do simulations take in the browser, depending on cases, model size and number of scenarios?
+- **RQ3 (usability).** Can users without simulation training set up a model, run scenarios and draw the correct conclusion, and how usable do they find the tool?
 
-Grounded in queueing theory and the business process redesign literature. H1 to H3 are expected from theory; the contribution lies in quantifying them for realistic BPMN processes and in H4 and H5.
+## 3. Related tools
 
-- **H1 (bottleneck).** Automating a task that is not the bottleneck has a negligible effect on mean cycle time, at every load level.
-- **H2 (variability).** The cycle-time benefit of reducing processing-time variability grows non-linearly with utilisation (Kingman's approximation).
-- **H3 (rework).** Above a threshold rework probability, removing a rework loop (e.g. through digital intake and validation) beats speeding up the reworked task.
-- **H4 (gap vs. effect).** Rankings of interventions by self-assessed gap and by simulated effect agree only weakly (Kendall's tau below 0.5).
-- **H5 (decision change).** After seeing simulation results, practitioners change their preferred intervention more often than a control group that re-ranks without simulation.
+Compare on: installation, BPMN 2.0 support, modelling environment, stochastic features (distributions, calendars, resources, costs), scenario comparison, replications and confidence intervals, playback, export (event log, report), licence and availability.
 
-## 4. Simulator readiness
+Candidates: BIMP, Prosimos and Simod, Apromore simulation, the bpmn-js token simulation, Bizagi Modeler simulation, SAP Signavio simulation, ARIS simulation, general-purpose tools such as AnyLogic and Simul8. Every cell of the comparison table must be checked against the current tool or its documentation.
 
-What the simulator already provides (verified in the code and wiki):
+## 4. Requirements and design
 
-- BPMN 2.0 execution with exclusive, parallel and inclusive gateways, timer events, boundary timers, subprocesses and terminate events.
-- Stochastic task times (fixed, exponential, normal, uniform, triangular, lognormal, gamma), arrival processes, roles, working hours, costs and revenue.
-- A seeded random number generator; scenarios run with the same seed (common random numbers).
-- Trimming of first and last cases to reduce warm-up and end effects; a simulation horizon.
-- Results by activity, resource and path; Excel and PDF reports; event logs as CSV and XES.
+Derive five to seven requirements from the literature on simulation adoption and from teaching experience in the CAS and BSc courses. Proposed:
 
-Gaps to close before the experiments (proposed simulator work packages):
+| Req. | Requirement | Design feature |
+| --- | --- | --- |
+| R1 | No installation, works on standard BPMN | Browser app, Camunda Modeler plugin, BPMN 2.0 import |
+| R2 | Parameterise where the process is | Properties on the diagram elements |
+| R3 | What-if analysis without copying models | Scenarios store differences only |
+| R4 | Sound comparisons without statistical training | Common random numbers, case trimming, warnings near full utilisation |
+| R5 | Understandable dynamics | Token playback, queue and waiting-time colouring |
+| R6 | Results that can be shared and reused | Excel and PDF reports, CSV and XES event logs |
 
-1. **Batch runner.** A headless command (Node) that runs a scenario file for a list of seeds and writes one result file per run. The UI is not suitable for hundreds of runs.
-2. **Replication statistics.** Mean, standard deviation and 95% confidence interval across seeds, and paired differences between scenarios under common random numbers.
-3. **Run metadata.** Simulator version or commit, seed, scenario hash and run timestamp written into every export.
-4. **Time-based warm-up.** Warm-up deletion by simulated time in addition to case trimming; Welch's method to choose its length.
-5. **Interoperability (optional).** Import or export of simulation parameters in a format that an established simulator reads (e.g. BPSim or Prosimos JSON), so the same model can be cross-checked.
-6. **Calibration from event logs (optional).** Derive arrival rates, task-time distributions and branch probabilities from an event log, e.g. with the ProcessIntelligence platform, to parameterise real processes.
+Architecture section: BPMN graph extraction, event-driven engine in a web worker, seeded random number generator, parameter layering, result aggregation, export.
 
-## 5. Study 1: simulator verification (credibility)
+## 5. Evaluation
 
-Goal: show that the simulator produces correct numbers. This verifies the simulator only; it says nothing about the PDI framework.
+### E1 Verification against queueing theory (RQ1)
 
 | Test | Reference |
 | --- | --- |
-| M/M/1 and M/M/c waiting time and utilisation | Analytical results (Erlang C) |
+| M/M/1 and M/M/c waiting time and utilisation | Erlang C |
 | M/G/1 with lognormal or gamma service | Pollaczek–Khinchine formula |
 | Tandem and branching networks | Jackson network results |
-| Little's Law across all runs | L = λW from the event log |
+| Little's Law on every run | L = λW from the event log |
 | Gateway routing | Observed vs. configured branch frequencies |
 | Working hours and timers | Hand-calculated deterministic cases |
-| Same model in an established simulator | Distribution of cycle time (two-sample tests, CI overlap) |
 
-Pass criterion per test: the analytical value lies inside the 95% confidence interval over at least 30 replications, at loads of 0.5, 0.7 and 0.9. Tests become part of the simulator's automated test suite.
+Loads 0.5, 0.7 and 0.9; at least 30 replications each; pass if the analytical value lies inside the 95% confidence interval. The tests go into the simulator's automated test suite so the paper can cite them.
 
-## 6. Study 2: computational experiments (RQ1, H1–H3)
+### E2 Cross-check with an established simulator (RQ1)
 
-**Models.** Four to six stylised reference processes (linear, with parallel branches, with a rework loop, with an approval gateway, with a shared resource pool), plus the real processes from Study 3 once available.
+Five to ten models, from a public collection where possible, run in the Process Simulator and in Prosimos or BIMP with the same parameters. Compare cycle-time and waiting-time distributions (CI overlap, two-sample tests) and resource utilisation. Report differences that come from different semantics, e.g. how calendars or resource selection work.
 
-**Intervention catalogue**, mapped to the PDI framework dimensions and to redesign best practices:
+### E3 Performance (RQ2)
 
-| Intervention | Simulator manipulation |
-| --- | --- |
-| Automate a task | Processing time × 0.1–0.5, lower variability, robot resource with its own cost |
-| Digital intake and validation | Lower rework probability at the downstream gateway |
-| Remove a handover | Merge two tasks into one, combined time minus a handover setup |
-| Self-service | Part of the arrivals bypass a task |
-| Add capacity | One more person in the bottleneck role |
-| Extend service hours | Change working hours |
+Run time and memory in Chrome, Firefox and Safari for 1,000 to 100,000 cases, models with 10 to 100 activities, and 1 to 10 scenarios. Recorded on stated hardware, median of ten runs.
 
-**Factors.** Intervention type × position (bottleneck / non-bottleneck) × utilisation of the bottleneck (0.6, 0.8, 0.9) × coefficient of variation of task times (0.5, 1.0, 1.5).
+### E4 Usability study (RQ3)
 
-**Responses.** Mean and 90th-percentile cycle time, waiting time, throughput, cases served and cases balked, utilisation, cost per case.
+- **Participants.** 20 to 30 students or practitioners without simulation training, preferably not only from the authors' own courses.
+- **Tasks.** Open a model, set arrival and task times, create two scenarios, run them, find the bottleneck and decide which scenario is better.
+- **Measures.** Task completion and correctness, time on task, System Usability Scale, short interview on difficulties.
+- **Ethics.** Informed consent and anonymised data; check whether BFH ethics review is required.
 
-**Run control.**
+### E5 Use cases (illustration)
 
-- Common random numbers within each cell: baseline and intervention use the same seed set.
-- 30 seeds per cell (to be confirmed by a pilot: stop when the CI half-width is below 5% of the mean).
-- Warm-up chosen with Welch's method per model and load level; the horizon is long enough that results do not depend on it at ρ = 0.9 (checked by doubling the horizon).
-- Over-capacity cells (ρ ≥ 1) are reported separately and excluded from mean effects.
+Two or three short cases: the coffee shop example, a teaching case from the CAS, a real process modelled in Camunda Modeler. They show the features; they are not evidence of benefit.
 
-**Analysis.** Paired differences with 95% CIs; regression of effect size on factors and their interactions; effect plots per load level. Analysis scripts in `analysis/`, results from `runs/` only.
+## 6. Simulator work needed for the paper
 
-## 7. Study 3: process applications (RQ2, H4)
+1. **Batch runner.** Headless command that runs a scenario file for a list of seeds and writes one result file per run (needed for E1 to E3).
+2. **Replications in the app.** Run a comparison over several seeds and show confidence intervals. This strengthens R4 and is a feature reviewers will ask about.
+3. **Run metadata.** Simulator version, seed and scenario hash in every export.
+4. **Parameter export for the cross-check.** Export to the input format of the reference simulator (E2), or a documented manual translation.
 
-Three to five real processes from different organisations, ideally outside the CAS programme. This also delivers the documented framework applications that the PDI paper lists as an alternative route to external validation.
-
-Per organisation:
-
-1. Process owner completes the PDI checkup for the process; derive the gap-based intervention ranking.
-2. Model the process in BPMN with the process owner; parameterise from event logs where available, otherwise from structured estimates (minimum, most likely, maximum → triangular).
-3. Validate the as-is model: simulated vs. observed cycle time and throughput (face validity with the process owner; quantitative where data exists).
-4. Simulate every candidate intervention; derive the effect-based ranking.
-5. Compare the rankings (Kendall's tau, top-1 agreement); discuss the differences with the process owner.
-
-A second evaluation cycle after implementation (where an organisation implements an intervention) compares predicted and realised effect.
-
-Coding and comparison of rankings are done by a person not involved in developing the framework.
-
-## 8. Study 4: practitioner study (RQ3, H5)
-
-- **Participants.** Process owners and analysts, at least 40, recruited outside the authors' own programme where possible.
-- **Design.** Between-subjects: both groups rank interventions for a realistic case; the treatment group then sees simulation results, the control group gets the same time to re-think; both re-rank.
-- **Measures.** Ranking change, agreement with the simulated optimum, decision confidence, perceived usefulness and ease of use.
-- **Pre-registration** of hypotheses and analysis before data collection.
-
-## 9. What each study can and cannot claim
+## 7. What the paper can and cannot claim
 
 | Claim | Supported by |
 | --- | --- |
-| The simulator computes queueing behaviour correctly | Study 1 |
-| Where digitalisation interventions pay off, in stylised processes | Study 2 |
-| Gap-based priorities diverge from effect-based priorities in practice | Study 3 (small n, illustrative) |
-| Simulation improves practitioners' intervention choices | Study 4 |
-| The PDI instrument is valid and reliable | Not this paper; needs the survey with n ≥ 200 |
-| Effects generalise to the Swiss economy | Not this paper |
+| The simulator computes queueing behaviour correctly | E1 |
+| Results agree with an established simulator | E2 |
+| Runs fast enough for interactive use in the browser | E3 |
+| Non-specialists can use it to reach correct conclusions | E4 (small sample, indicative) |
+| Simulation improves real organisational decisions | Not this paper |
 
-## 10. Reproducibility and data
+## 8. Availability and licence
 
-- Pin the simulator commit for every run; archive the exact version together with models, scenarios and scripts for the paper.
-- Stylised models and their scenarios are published; partner models only with written permission, otherwise anonymised or described.
-- Study 3 and 4: informed consent, anonymised data, no participant-level data in the repository without consent.
-- **Licence conflict to resolve:** the simulator is proprietary. Many journals and artefact tracks expect code availability. Options: release an archived version for reviewers under a restricted licence, publish only the batch runner and analysis code, or make the research version open. Decision in `TASKS.md`.
+The web app is publicly available; the source code is proprietary. Tool and demo tracks usually require the tool to be accessible, and some software journals require an open-source licence. Before choosing a venue, check its availability rules and decide whether to:
 
-## 11. Ethics
+- publish only the web app and a screencast,
+- give reviewers access to the code under a restricted licence, or
+- publish an archived version (e.g. on Zenodo with a DOI) for citation.
 
-- Studies 1 and 2 involve no people.
-- Studies 3 and 4 need BFH ethics review, consent forms and data-protection handling (Swiss FADP).
-- Disclose that the first author developed both the simulator and the framework and directs the programme from which participants might come.
+## 9. Venues
 
-## 12. Work plan
+To be checked for scope, format, availability rules and deadlines:
+
+- BPM Conference, Demos and Resources track: short paper with screencast; best first target.
+- BPM Forum or a BPM-related workshop.
+- A journal version later (e.g. Business Process Management Journal or Simulation Modelling Practice and Theory) with E4 completed.
+- Software journals such as SoftwareX only if their licence requirements can be met.
+
+## 10. Work plan
 
 | Phase | Content | Duration |
 | --- | --- | --- |
-| 0 | Decisions in `TASKS.md`; literature review on BPS and redesign heuristics | 2–3 weeks |
-| 1 | Simulator work packages 1–4 | 3–4 weeks |
-| 2 | Study 1 verification; optional short tool paper | 3 weeks |
-| 3 | Study 2 computational experiments | 4 weeks |
-| 4 | Ethics approval, partner recruitment (in parallel with 1–3) | 6–8 weeks |
-| 5 | Study 3 process applications | 8–12 weeks |
-| 6 | Study 4 practitioner study | 6–8 weeks |
-| 7 | Writing and internal review | 6 weeks |
+| 0 | Decide venue and licence route; tool comparison | 2 weeks |
+| 1 | Simulator work packages 1–3 | 3 weeks |
+| 2 | E1 verification and E3 performance | 2 weeks |
+| 3 | E2 cross-check | 2–3 weeks |
+| 4 | Demo paper and screencast | 2 weeks |
+| 5 | E4 usability study (ethics, recruitment, sessions) | 6–8 weeks |
+| 6 | Journal version | 4–6 weeks |
 
-Studies 1 and 2 alone are enough for a first conference paper; Studies 3 and 4 are needed for the journal version.
-
-## 13. Literature to review
+## 11. Literature to review
 
 Candidates only; each needs a verified DOI before it is cited.
 
-- Design science: Hevner et al. (2004); Peffers et al. (2007); Venable et al. (2016), FEDS evaluation framework.
 - Business process simulation: van der Aalst, business process simulation survival guide; Camargo et al., Simod; López-Pintado et al., Prosimos; Dumas et al., *Fundamentals of Business Process Management*.
-- Simulation methodology: Law, *Simulation Modeling and Analysis*; Sargent on verification and validation of simulation models; Welch's warm-up method.
+- Simulation methodology: Law, *Simulation Modeling and Analysis*; Sargent on verification and validation of simulation models.
 - Queueing: Little (1961); Kingman (1961).
-- Redesign: Reijers and Liman Mansar (2005), best practices in business process redesign.
-- Digitalisation prioritisation: the PDI paper and the maturity models it positions against.
+- Usability: Brooke, System Usability Scale; Bangor et al. on interpreting SUS scores.
+- Design science framing for the requirements: Hevner et al. (2004); Peffers et al. (2007).
 
-## 14. Candidate venues
+## 12. Later paper
 
-To be checked for scope, format and deadlines: BPM Conference (main, Forum, Demo tracks), Business Process Management Journal, Simulation Modelling Practice and Theory, Journal of Simulation, Winter Simulation Conference.
+A follow-up can use the simulator to evaluate digitalisation decisions from the PDI framework (compare gap-based and simulated priorities on real processes). It needs the batch runner from §6 and is out of scope here.
