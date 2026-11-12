@@ -4,7 +4,7 @@ Status: draft for author discussion. Nothing in this plan is a result.
 
 **Working title.** BPSBench: A Business Process Simulation Benchmark with Statistically Guaranteed Ground Truth for What-If Analysis
 
-Name check (November 2026): no paper or repository named "BPSBench" or "Business Process Simulation Benchmark" was found on GitHub, arXiv or Crossref. "WhatIfBench" is taken by an LLM counterfactual-reasoning benchmark and is not used. Repeat the check on Google Scholar before submission.
+Name check (November 2026): no paper or repository named "BPSBench" or "Business Process Simulation Benchmark" was found on GitHub or Crossref; the arXiv query returned nothing and must be repeated. "WhatIfBench" is taken by an LLM counterfactual-reasoning benchmark and is not used. Repeat the check on arXiv and Google Scholar before submission.
 
 ## 1. Scope
 
