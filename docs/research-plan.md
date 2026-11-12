@@ -16,7 +16,7 @@ Contributions:
 2. **Construction method.** A procedure that makes the ground truth independent of a single simulator and of chance: analytical solutions where they exist, agreement of two simulators otherwise, and ranking-and-selection statistics.
 3. **Baselines and a headline finding.** How often common practice (one run per scenario) picks a worse intervention, compared with simple rules and the statistically sound procedure.
 
-Out of scope: discovery of simulation models from logs, log similarity, data-aware or agent-based simulation, usability.
+Out of scope: LLM-generated interventions, discovery of simulation models from logs, log similarity, data-aware or agent-based simulation, usability.
 
 ## 2. Requirements for a bulletproof ground truth
 
@@ -28,7 +28,7 @@ Out of scope: discovery of simulation models from logs, log similarity, data-awa
 | R4 | Unambiguous task | One objective per instance (e.g. mean cycle time, at most +1 FTE), fixed horizon or documented warm-up, fixed intervention catalogue |
 | R5 | Stable | The best set must not change under other seed streams, longer runs, another warm-up and the second simulator; publish the stability per instance |
 | R6 | Not trivial | Label every instance with whether the rule "add capacity at the highest utilisation" already solves it; balance the benchmark across difficulty |
-| R7 | Clean data | Only assets with verified licences; generated instances with published generator and seeds; a held-out test split to limit training-data contamination |
+| R7 | Clean data | Only assets with verified licences; generated instances with published generator and seeds; a held-out test split for learning-based methods evaluated on the benchmark later |
 | R8 | Reproducible | Open-source simulator and scripts, pinned versions, checksums, Zenodo DOI, one command recomputes every ground truth |
 
 ## 3. Instances
@@ -45,7 +45,6 @@ Pilot: 6–8 instances to fix δ, run lengths and thresholds before the main run
 - **E1 Ground-truth validation.** Tier A: simulated best set against the analytical best. Tier B: agreement rate between the two simulators; stability checks R5.
 - **E2 Wrong-decision rates of common practice.** Methods: one run each with independent seeds; one run each with common random numbers; replications with confidence intervals; ranking and selection. Response: probability of choosing an intervention outside the best set, as a function of the factors. Logistic regression and error curves.
 - **E3 Baselines on the benchmark.** Random choice, utilisation rule, single-run comparison, ranking and selection. Metrics: hit rate (choice in the best set), regret (relative gap to the best), cost of the chosen intervention.
-- **E4 Optional: LLM baselines.** One or two pinned models (at least one open-weights), structured scenario output, invalid output counts as failure, five repeats. Reported as additional baselines, not as the main claim. Decision pending.
 
 ## 5. Simulator work needed
 
@@ -86,7 +85,7 @@ IF values must be checked on the publisher page (JCR figure) before submission.
 | 0 | Literature review, pilot, fix δ and thresholds | 3 weeks |
 | 1 | Simulator work packages 1–5 | 4 weeks |
 | 2 | Instance generator, Prosimos exporter, Tier A and B ground truth | 5 weeks |
-| 3 | E1–E3 (E4 if decided) | 3 weeks |
+| 3 | E1–E3 | 3 weeks |
 | 4 | Writing, Zenodo release | 4–6 weeks |
 
 About five months to submission.

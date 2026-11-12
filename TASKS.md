@@ -2,7 +2,6 @@
 
 ## Decisions
 
-- [ ] LLM baselines (E4): include as optional baselines or drop.
 - [ ] Open-source licence for the simulator.
 - [ ] Indifference zone δ and probability of correct selection, after the pilot.
 - [ ] Author list.
