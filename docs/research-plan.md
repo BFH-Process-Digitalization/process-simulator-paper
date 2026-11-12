@@ -2,146 +2,102 @@
 
 Status: draft for author discussion. Nothing in this plan is a result.
 
-## 1. Contribution
+**Working title.** BPSBench: A Business Process Simulation Benchmark with Statistically Guaranteed Ground Truth for What-If Analysis
 
-A paper about the Process Simulator, a BPMN 2.0 discrete-event simulator that runs in the browser and as a Camunda Modeler plugin, evaluated entirely by automated experiments. No human participants are involved.
+Name check (November 2026): no paper or repository named "BPSBench" or "Business Process Simulation Benchmark" was found on GitHub or Crossref; the arXiv query returned nothing and must be repeated. "WhatIfBench" is taken by an LLM counterfactual-reasoning benchmark and is not used. Repeat the check on arXiv and Google Scholar before submission.
 
-Two contributions:
+## 1. Scope
 
-1. **Artefact.** A BPMN-native simulator for what-if analysis on unchanged BPMN 2.0 models, with no installation and no server, designed so that scenario comparisons are statistically sound by default (common random numbers, replications, warm-up handling).
-2. **Methodological finding.** A quantification of how often the common practice of comparing scenarios from single, independently seeded runs leads to the wrong decision, and how much common random numbers and replications reduce that error.
+One question only: **given a process, a goal and a fixed set of candidate interventions, which intervention is best?**
 
-A tool description alone will not pass review at an IF > 3.5 journal; contribution 2 carries the paper.
+Contributions:
 
-## 2. Research questions
+1. **Benchmark.** Process instances, candidate interventions and, for each instance, the set of best interventions with a stated probability of correct selection.
+2. **Construction method.** A procedure that makes the ground truth independent of a single simulator and of chance: analytical solutions where they exist, agreement of two simulators otherwise, and ranking-and-selection statistics.
+3. **Baselines and a headline finding.** How often common practice (one run per scenario) picks a worse intervention, compared with simple rules and the statistically sound procedure.
 
-- **RQ1 (correctness).** Does the simulator reproduce analytical queueing results?
-- **RQ2 (accuracy).** How closely do simulations reproduce real process behaviour recorded in public event logs, compared with an established business process simulator?
-- **RQ3 (decision quality).** How often does a single-run scenario comparison select the inferior scenario, and how does this error depend on load, variability, effect size and run length, with and without common random numbers and replications?
-- **RQ4 (efficiency).** Is the browser engine fast enough for interactive what-if analysis at realistic model sizes and case volumes?
+Out of scope: LLM-generated interventions, discovery of simulation models from logs, log similarity, data-aware or agent-based simulation, usability.
 
-## 3. Hypotheses
+## 2. Requirements for a bulletproof ground truth
 
-- **H1.** For all verification models, the analytical value lies within the 95% confidence interval of the simulated mean.
-- **H2.** On the same discovered models, the simulator's accuracy is not worse than that of the reference simulator on the standard similarity measures.
-- **H3.** The wrong-decision rate of independent single-run comparisons rises with utilisation and falls with effect size; at utilisation 0.9 and small effects it exceeds 20%.
-- **H4.** Common random numbers reduce the wrong-decision rate at equal computing time; adding replications with a confidence-interval stopping rule reduces it below 5%.
-- **H5.** A comparison of three scenarios with 10,000 cases each completes within a few seconds in current browsers on a standard laptop.
+| # | Requirement | How |
+| --- | --- | --- |
+| R1 | Not dependent on one simulator | Tier A: instances with exact queueing solutions (M/M/c, M/G/1, Jackson networks); the winner follows from the formula. Tier B: richer instances; a winner counts only if the Process Simulator and Prosimos agree, otherwise the instance is dropped and reported |
+| R2 | Statistically guaranteed | Ranking and selection with an indifference zone δ (e.g. Kim–Nelson); the reported best set is correct with probability ≥ 0.95. Interventions within δ of the best are tied |
+| R3 | Valid common random numbers | Random numbers keyed to events, so an intervention that changes a case's path does not shift later draws. Verify the simulator's current seed semantics first |
+| R4 | Unambiguous task | One objective per instance (e.g. mean cycle time, at most +1 FTE), fixed horizon or documented warm-up, fixed intervention catalogue |
+| R5 | Stable | The best set must not change under other seed streams, longer runs, another warm-up and the second simulator; publish the stability per instance |
+| R6 | Not trivial | Label every instance with whether the rule "add capacity at the highest utilisation" already solves it; balance the benchmark across difficulty |
+| R7 | Clean data | Only assets with verified licences; generated instances with published generator and seeds; a held-out test split for learning-based methods evaluated on the benchmark later |
+| R8 | Reproducible | Open-source simulator and scripts, pinned versions, checksums, Zenodo DOI, one command recomputes every ground truth |
 
-Thresholds in H3 and H5 are placeholders to be set after a pilot and stated before the main runs.
+## 3. Instances
+
+- **Tier A (analytical):** single-server and multi-server stations, tandem lines and open networks with exponential or general service. Interventions: add a server, speed up a task, reroute, change arrival rate.
+- **Tier B (simulated):** generated BPMN models with sequence, choice, parallelism and loops, plus the Prosimos and Simod test models and the simulator's coffee-shop example (licences to verify).
+- **Factors varied:** bottleneck utilisation (0.6–0.95), task-time variability (CV 0.5–1.5), true effect size between candidates, model size.
+- **Candidate catalogue:** add capacity, speed up a task, remove a task (waste), change working hours, change routing probability, reduce rework probability. About 10–30 candidates per instance.
+
+Pilot: 6–8 instances to fix δ, run lengths and thresholds before the main runs.
 
 ## 4. Experiments
 
-### E1 Verification against queueing theory (RQ1)
-
-| Model | Reference |
-| --- | --- |
-| M/M/1, M/M/c | Erlang C waiting time, utilisation |
-| M/G/1 with lognormal and gamma service | Pollaczek–Khinchine formula |
-| Tandem and branching open networks | Jackson network results |
-| Every run | Little's Law, L = λW, from the event log |
-| Gateways | Observed vs. configured branch frequencies |
-| Working hours and timers | Hand-calculated deterministic cases |
-
-Loads 0.5, 0.7, 0.9 and 0.95; at least 30 replications; warm-up removed with Welch's method. The tests become part of the simulator's automated test suite.
-
-### E2 Accuracy on public event logs (RQ2)
-
-1. **Logs.** Public real-life logs, e.g. BPI Challenge 2012, 2017, 2019 and 2020, plus the logs used in prior simulation-discovery studies (check licences; all must be openly available).
-2. **Discovery.** Discover the BPMN model and simulation parameters (arrivals, task-time distributions, branching probabilities, resources, calendars) from a training part of each log, using the established discovery pipeline so both simulators get the same model.
-3. **Translation.** Convert the discovered parameters into the Process Simulator's format with a documented, automated converter.
-4. **Simulation.** Simulate the test period with the Process Simulator and with the reference simulator; 10 to 30 replications each.
-5. **Measures.** The similarity measures proposed for business process simulation models: control-flow (n-gram) distance, absolute and relative event distribution, circadian distribution, arrival distribution, cycle-time distribution.
-6. **Analysis.** Paired comparison per log and measure; report where and why the engines differ (semantics of calendars, resource allocation, batching).
-
-This isolates the engine: both simulators run the same discovered model, so differences come from simulation semantics, not from discovery.
-
-### E3 Decision quality of scenario comparison (RQ3)
-
-**Ground truth.** For each pair of scenarios, the true better scenario is fixed by very long runs with many replications.
-
-**Factors.**
-
-| Factor | Levels |
-| --- | --- |
-| Model | Generated BPMN models of increasing size and structure (sequence, parallel, choice, loop) |
-| Utilisation of the bottleneck | 0.6, 0.8, 0.9, 0.95 |
-| Coefficient of variation of task times | 0.5, 1.0, 1.5 |
-| True effect size on mean cycle time | 1%, 2%, 5%, 10%, 20% |
-| Run length | 100, 1,000, 10,000 cases |
-| Intervention type | Faster task, more capacity, lower rework probability, changed routing |
-
-**Comparison methods.**
-
-1. Single run each, independent seeds (common practice).
-2. Single run each, common random numbers.
-3. k replications with independent seeds, decision by confidence interval.
-4. k replications with common random numbers, paired confidence interval (the simulator's design).
-
-**Responses.** Wrong-decision rate, rate of "no difference" verdicts, computing time to a correct decision.
-
-**Analysis.** Logistic regression of a wrong decision on the factors and methods; error-rate curves per load and effect size; equal-computing-time comparison of the methods.
-
-### E4 Performance (RQ4)
-
-Run time and memory in Chrome, Firefox and Safari for 1,000 to 100,000 cases, 10 to 200 activities and 1 to 10 scenarios, on stated hardware, median of ten runs. Same models in the reference simulator for orientation.
+- **E1 Ground-truth validation.** Tier A: simulated best set against the analytical best. Tier B: agreement rate between the two simulators; stability checks R5.
+- **E2 Wrong-decision rates of common practice.** Methods: one run each with independent seeds; one run each with common random numbers; replications with confidence intervals; ranking and selection. Response: probability of choosing an intervention outside the best set, as a function of the factors. Logistic regression and error curves.
+- **E3 Baselines on the benchmark.** Random choice, utilisation rule, single-run comparison, ranking and selection. Metrics: hit rate (choice in the best set), regret (relative gap to the best), cost of the chosen intervention.
 
 ## 5. Simulator work needed
 
-1. **Batch runner.** Headless command (Node) that runs scenario files over a list of seeds and writes one result file per run. Needed for every experiment.
-2. **Replications and confidence intervals in the app**, with paired comparison under common random numbers. This is the design feature the paper evaluates in E3.
-3. **Time-based warm-up** in addition to case trimming.
-4. **Run metadata** in every export: simulator version, seed, scenario hash.
-5. **Parameter import** from the discovery pipeline's output format (E2).
-6. **Model generator** for E3, or use of an existing random process-model generator.
+1. Headless batch runner over seed lists and scenario files.
+2. Event-keyed random numbers for common random numbers (R3).
+3. Ranking-and-selection procedure and paired confidence intervals.
+4. Time-based warm-up.
+5. Run metadata in every export: simulator version, seed, scenario hash.
+6. Exporter to Prosimos input for Tier B cross-checks.
+7. Instance generator.
 
 ## 6. Reproducibility
 
 - Every number in the paper comes from scripts in `analysis/` that read `runs/`.
-- Pin the simulator commit for every run.
-- Publish generated models, scenario files, converters, raw results and analysis scripts with a DOI (e.g. Zenodo).
-- The web app is public; the simulator source is proprietary. State this in the data and code availability statement and offer reviewers access to the exact engine version. Check each journal's code policy before submission.
+- Benchmark, generator, scripts and raw results on Zenodo with a DOI.
+- The simulator is to be released under an open-source licence before submission (decision pending).
 
 ## 7. Threats to validity
 
-- E2 depends on the quality of the discovered models; the comparison is between engines on the same model, not of discovery.
-- Generated models in E3 may not represent real processes; mitigate with the E2 models as an additional set.
-- Ground truth in E3 is itself estimated; use run lengths that make its error negligible relative to the smallest effect.
-- Author is also the tool developer; mitigate with fully scripted, published experiments.
+- Generated instances may not represent real processes; mitigated by Tier B public models and by reporting results per tier.
+- Ground truth is itself estimated in Tier B; mitigated by R2, R5 and the two-simulator rule.
+- Author is also the tool developer; mitigated by the second simulator and fully scripted, published experiments.
 
 ## 8. Target journals
 
-IF values must be checked on the publisher page (JCR figure) before submission; ✓ marks values read from publisher pages in August 2026.
+IF values must be checked on the publisher page (JCR figure) before submission.
 
 | Journal | IF | Fit |
 | --- | --- | --- |
-| **IEEE Access** (primary) | 4.2 per author, to verify on IEEE page | Broad scope, tool plus computational evaluation; single-round binary review, fast decisions; open-access fee (about USD 2,000, to verify) |
-| Decision Support Systems | about 6–7, to verify | Higher prestige in BPM/IS; simulation models from event logs and decision quality |
+| **IEEE Access** (primary) | 4.2 per author, to verify on IEEE page | Broad scope, computational evaluation; single-round binary review; open-access fee to verify |
+| Decision Support Systems | about 6–7, to verify | Decision quality of process simulation |
 | Expert Systems with Applications | about 7–8, to verify | Computational evaluation, high volume |
-| Information Systems Frontiers | 6.2 ✓ | IS artefact framing; median 34 days to first decision ✓ |
-| Business Process Management Journal | 5.8 ✓ | BPM practice framing; fast first decision ✓ |
-
-IEEE Access has no major-revision round: the submitted paper must already contain all four experiments, the complete reproducibility package and the threats-to-validity section.
 
 ## 9. Work plan
 
 | Phase | Content | Duration |
 | --- | --- | --- |
-| 0 | Literature review, journal decision, pilot for thresholds | 2–3 weeks |
-| 1 | Simulator work packages 1–4 | 3–4 weeks |
-| 2 | E1 verification and E4 performance | 2 weeks |
-| 3 | E2 discovery pipeline, converter, runs | 4–6 weeks |
-| 4 | E3 decision-quality experiment | 4 weeks |
-| 5 | Writing | 4–6 weeks |
+| 0 | Literature review, pilot, fix δ and thresholds | 3 weeks |
+| 1 | Simulator work packages 1–5 | 4 weeks |
+| 2 | Instance generator, Prosimos exporter, Tier A and B ground truth | 5 weeks |
+| 3 | E1–E3 | 3 weeks |
+| 4 | Writing, Zenodo release | 4–6 weeks |
 
-About four to six months to submission. IEEE Access typically decides within weeks; the other journals take six to twelve months to publication.
+About five months to submission.
 
-## 10. Literature to review
+## 10. Related work (preliminary search, arXiv and Crossref)
 
-Candidates only; each needs a verified DOI before it is cited.
+No published work was found that builds a benchmark of intervention-selection tasks with statistically guaranteed ground truth for business process simulation. Closest work, to be read in full and cited:
 
-- Business process simulation: van der Aalst, business process simulation survival guide; Dumas et al., *Fundamentals of Business Process Management*.
-- Discovery of simulation models from event logs: Camargo et al., Simod; López-Pintado et al., Prosimos; Chapela-Campa et al., measuring the quality of business process simulation models.
-- Simulation output analysis: Law, *Simulation Modeling and Analysis*; Sargent on verification and validation; Welch's warm-up method; literature on common random numbers and variance reduction.
-- Queueing: Little (1961); Kingman (1961).
-- Random process-model generation for experiments.
+- Chapela-Campa et al., "Can I Trust My Simulation Model? Measuring the Quality of Business Process Simulation Models", arXiv 2303.17463: quality by log similarity, not decisions.
+- Özdemir et al., "Rethinking BPS: A Utility-Based Evaluation Framework", arXiv 2505.22316: utility for downstream predictive tasks, not intervention selection. Closest framing.
+- Fournier et al., "Towards a Benchmark for Causal Business Process Reasoning with LLMs", arXiv 2406.05506: rule-based ground truth, no simulation.
+- Klievtsova et al., "Conversational Process Model Redesign", arXiv 2505.05453.
+- Vidgof et al., "Large Language Models for Business Process Management: Opportunities and Challenges", doi:10.1007/978-3-031-41623-1_7.
+- Common random numbers: doi:10.1109/wsc.1990.129543; doi:10.1109/wsc.2008.4736074; "Realizing Common Random Numbers: Event-Keyed Hashing for Causally Valid Stochastic Models", arXiv 2603.11084.
+- To add: ranking and selection (Kim and Nelson), Law, *Simulation Modeling and Analysis*; Prosimos and Simod papers; BPM, ICPM and CAiSE 2025–2026 proceedings; Google Scholar, Scopus.
