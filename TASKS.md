@@ -2,21 +2,21 @@
 
 ## Decisions
 
-- [ ] Target journal: IEEE Access (primary) or Decision Support Systems. See `docs/research-plan.md` §8.
-- [ ] Code availability statement given the proprietary licence (§6).
-- [ ] Reference simulator and discovery pipeline for E2.
+- [ ] LLM baselines (E4): include as optional baselines or drop.
+- [ ] Open-source licence for the simulator.
+- [ ] Indifference zone δ and probability of correct selection, after the pilot.
 - [ ] Author list.
 
 ## Work packages
 
 - [ ] Verify IF, open-access fee and code policy of IEEE Access and the alternatives
-- [ ] Simulator: headless batch runner over a seed list
-- [ ] Simulator: replications and paired confidence intervals in the app
-- [ ] Simulator: time-based warm-up
-- [ ] Simulator: run metadata in every export
-- [ ] Simulator: parameter import for discovered models
-- [ ] E1 verification tests against queueing results
-- [ ] E2 log selection, discovery, converter, runs
-- [ ] E3 model generator, pilot, thresholds fixed before main runs
-- [ ] E4 performance benchmark
-- [ ] Literature review with verified DOIs
+- [ ] Verify licences of Prosimos and Simod assets
+- [ ] Simulator: headless batch runner over seed lists
+- [ ] Simulator: event-keyed random numbers
+- [ ] Simulator: ranking and selection, paired confidence intervals
+- [ ] Simulator: time-based warm-up and run metadata
+- [ ] Prosimos exporter for Tier B cross-checks
+- [ ] Instance generator, pilot with 6–8 instances
+- [ ] Tier A and Tier B ground truth with stability checks
+- [ ] E1–E3
+- [ ] Literature review with verified DOIs; repeat name check
