@@ -1,0 +1,128 @@
+{
+  "reps": 5,
+  "node": "v20.20.2",
+  "cpu": "Intel(R) Xeon(R) Processor",
+  "threads": 8,
+  "rows": [
+    {
+      "series": "cases",
+      "x": 1000,
+      "cases": 1000,
+      "tasks": 1,
+      "ms": 19.19,
+      "casesPerSecond": 52110.474205315266
+    },
+    {
+      "series": "cases",
+      "x": 10000,
+      "cases": 10000,
+      "tasks": 1,
+      "ms": 81.48,
+      "casesPerSecond": 122729.50417280314
+    },
+    {
+      "series": "cases",
+      "x": 100000,
+      "cases": 100000,
+      "tasks": 1,
+      "ms": 995.03,
+      "casesPerSecond": 100499.4824276655
+    },
+    {
+      "series": "cases",
+      "x": 1000000,
+      "cases": 1000000,
+      "tasks": 1,
+      "ms": 10211.97,
+      "casesPerSecond": 73443.32190556769
+    },
+    {
+      "series": "sequence",
+      "x": 5,
+      "cases": 10000,
+      "tasks": 5,
+      "ms": 170.14,
+      "casesPerSecond": 58775.12636652169
+    },
+    {
+      "series": "sequence",
+      "x": 10,
+      "cases": 10000,
+      "tasks": 10,
+      "ms": 301.47,
+      "casesPerSecond": 33170.7964308223
+    },
+    {
+      "series": "sequence",
+      "x": 20,
+      "cases": 10000,
+      "tasks": 20,
+      "ms": 607.73,
+      "casesPerSecond": 16454.67559607062
+    },
+    {
+      "series": "sequence",
+      "x": 50,
+      "cases": 10000,
+      "tasks": 50,
+      "ms": 1749.01,
+      "casesPerSecond": 5717.520197140097
+    },
+    {
+      "series": "sequence",
+      "x": 100,
+      "cases": 10000,
+      "tasks": 100,
+      "ms": 4478.04,
+      "casesPerSecond": 2233.1198470759527
+    },
+    {
+      "series": "sequence",
+      "x": 200,
+      "cases": 10000,
+      "tasks": 200,
+      "ms": 12695.63,
+      "casesPerSecond": 787.6726086062685
+    },
+    {
+      "series": "parallel",
+      "x": 2,
+      "cases": 10000,
+      "tasks": 2,
+      "ms": 127.23,
+      "casesPerSecond": 78597.81498074353
+    },
+    {
+      "series": "parallel",
+      "x": 5,
+      "cases": 10000,
+      "tasks": 5,
+      "ms": 182.26,
+      "casesPerSecond": 54866.6739822232
+    },
+    {
+      "series": "parallel",
+      "x": 10,
+      "cases": 10000,
+      "tasks": 10,
+      "ms": 365.55,
+      "casesPerSecond": 27356.03884557516
+    },
+    {
+      "series": "parallel",
+      "x": 20,
+      "cases": 10000,
+      "tasks": 20,
+      "ms": 757.02,
+      "casesPerSecond": 13209.690629045468
+    },
+    {
+      "series": "parallel",
+      "x": 50,
+      "cases": 10000,
+      "tasks": 50,
+      "ms": 2189.23,
+      "casesPerSecond": 4567.816081453297
+    }
+  ]
+}

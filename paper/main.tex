@@ -1,0 +1,175 @@
+\documentclass[preprint,12pt]{elsarticle}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\input{generated/macros}
+\providecommand{\VsixMillion}{--}\providecommand{\VsixRate}{--}\providecommand{\VsixCpu}{--}\providecommand{\VsixNode}{--}
+\providecommand{\VthreeCases}{--}\providecommand{\VthreeLogCycle}{--}\providecommand{\VthreeOwnCycle}{--}\providecommand{\VthreeProCycle}{--}\providecommand{\VthreeDiff}{--}\providecommand{\VthreeApprox}{--}
+\newcommand{\tool}{Process Simulator}
+\journal{Simulation Modelling Practice and Theory}
+
+\begin{document}
+\begin{frontmatter}
+\title{Process Simulator: an open, browser-based BPMN simulation environment with statistically sound scenario comparison and simulation-based value stream mapping}
+\author{Moritz Maier}
+\ead{moritz.maier@bfh.ch}
+\affiliation{organization={Bern University of Applied Sciences (BFH)},city={Bern},country={Switzerland}}
+
+\begin{abstract}
+What-if analysis with business process simulation is usually done in tools that compare a single simulated run per scenario, and that report a value stream map only for straight sequences of steps. We present \tool, an open-source (Apache-2.0) discrete-event simulation environment for BPMN~2.0 models that runs entirely in the web browser and as a plugin for the Camunda Modeler. It combines modelling and simulation in one editor, compares scenarios with independent replications, confidence intervals and common random numbers drawn from per-source random streams, and derives value stream figures (lead time, process cycle efficiency, value-added and non-value-added time, rework and waiting) from the simulated cases, which also covers exclusive and parallel branches and loops. A command-line runner makes all experiments scriptable. We verify the engine against exact queueing results (M/M/1, M/M/$c$, M/G/1, tandem and Jackson networks): all \VoneCovered{} confidence intervals cover the exact value, with a largest relative error of \VoneWorst. A cross-check with the Prosimos simulator on the same models shows no significant difference in \VtwoZero{} compared quantities. On a model discovered with Simod from the BPI Challenge 2012 log, both simulators agree within \VthreeDiff{} in mean cycle time. The value stream figures match closed-form results for sequences, choices, parallel splits and loops, where a linear value stream map misstates process cycle efficiency. On a staffing problem, choosing the best of five options from one run per scenario picks a wrong option in up to \VfiveOfficeIndep{} of the trials, whereas ten paired replications reduce this to \VfiveOfficeRep. All results can be recomputed with one command.
+\end{abstract}
+
+\begin{keyword}
+Business process simulation \sep BPMN \sep Discrete-event simulation \sep Common random numbers \sep Value stream mapping \sep Verification and validation \sep Open-source software
+\end{keyword}
+\end{frontmatter}
+
+\section{Introduction}
+\label{sec:intro}
+Business process simulation (BPS) estimates the effect of changes such as additional staff, shorter activities or different routing before they are implemented \cite{vanderaalst2015,dumas2018}. Many BPM suites contain a simulator, and dedicated engines exist in research, notably BIMP (QBP) and Prosimos \cite{lopezpintado2022,lopezpintado2024}, together with tools that discover simulation models from event logs \cite{rozinat2009,camargo2020}. Surveys of tool support report heterogeneous and often limited simulation capabilities \cite{pereira2016,rosenthal2021,laue2016}.
+
+Two practical gaps motivated the tool presented here. First, what-if results are commonly read from a single run per scenario. The statistical remedies, independent replications, confidence intervals and common random numbers (CRN), are textbook simulation methodology \cite{law2015,nelson1995,kim2001}, but they are rarely part of the modelling workflow of BPMN tools. Second, value stream mapping (VSM) \cite{rother1999} is widely used to discuss lead time and waste, and simulation-based VSM is established in manufacturing \cite{lian2007,solding2009}; process mining has been used to obtain value stream maps from logs \cite{knoll2019}. A value stream map, however, assumes a linear sequence of steps, whereas BPMN models contain exclusive choices, parallel branches and loops.
+
+This paper describes \tool{} and, mainly, its verification and validation. We do not claim that BPMN simulation, simulation-based VSM or the combination of a model editor with a simulator are new. The contribution is an open, validated environment that integrates them:
+\begin{enumerate}
+\item modelling and simulation in one browser application without installation, and the same engine as a Camunda Modeler plugin and a command-line runner (Section~\ref{sec:tool});
+\item scenario comparison with replications, Student-$t$ confidence intervals and paired differences under CRN, where each source of randomness has its own stream so that changing one activity does not shift the random numbers of the others (Section~\ref{sec:stats});
+\item value stream figures computed from the simulated time line of each case, which partition lead time also for choices, parallel branches and loops (Section~\ref{sec:vsm});
+\item an automated evaluation: exact queueing results, a cross-check with Prosimos, a model discovered from a public event log, closed-form VSM cases, decision quality of single runs versus replications, and run time (Section~\ref{sec:eval});
+\item a reproducibility package under Apache-2.0 that recomputes every number in this paper with one command.
+\end{enumerate}
+
+\section{Related work}
+\label{sec:related}
+\paragraph{BPS tools and engines} BPS has a long tradition \cite{vanderaalst2015}; the BPSim standard defines simulation parameters for BPMN models \cite{laue2016}. Pereira and Freitas \cite{pereira2016} and Rosenthal et al.\ \cite{rosenthal2021} compare simulation support in BPM tools and observe large differences in the supported parameters and outputs. Prosimos is an open-source Python engine with differentiated resources, i.e.\ individual calendars and performance per resource \cite{lopezpintado2022}; it is the engine behind Simod, which discovers simulation models from event logs \cite{camargo2020,lopezpintado2024}. Our engine is simpler in this respect: resources form roles with a shared calendar and a single duration distribution per activity.
+
+\paragraph{Quality of simulation models} Discovered models are usually assessed by comparing simulated and real logs \cite{chapela2023,chapela2025} or by their usefulness for downstream tasks \cite{oezdemir2025}. Blümel et al.\ \cite{bluemel2026} show that data-preparation choices can change what-if conclusions on a real log. These works concern model discovery; we use a discovered model only to check that our engine reproduces a second engine on realistic input (Section~\ref{sec:v3}).
+
+\paragraph{Comparing alternatives} Selecting the best of several simulated systems is the subject of ranking and selection \cite{bechhofer1954,kim2001}; CRN reduce the variance of differences between systems \cite{nelson1995,law2015}. Independent streams per source are a standard way to keep random numbers synchronised across scenarios \cite{lecuyer2002}. Testbeds such as SimOpt collect simulation-optimisation problems \cite{pasupathy2006,eckman2023}. We implement replications, confidence intervals and CRN; we do not implement a ranking-and-selection procedure.
+
+\paragraph{Value stream mapping} Simulation-based VSM has been proposed for manufacturing systems to add dynamics to the static map \cite{lian2007,solding2009}, and multidimensional process mining has been used to build value stream maps for internal logistics \cite{knoll2019}. Our VSM view applies the same idea to BPMN models and defines the figures on the simulated case time line, so that they remain well defined for non-linear control flow.
+
+\section{The tool}
+\label{sec:tool}
+\subsection{Architecture}
+\tool{} is a TypeScript application. The modeller is bpmn-js; simulation parameters are stored inside the BPMN file as an extension element, so a model and its scenarios travel as one file. The discrete-event engine has no browser dependencies and runs in a Web Worker in the browser, in the Camunda Modeler plugin and in Node.js through the command-line runner \texttt{procsim}. The runner reads a BPMN file, runs one or all stored scenarios, or a scenario given as JSON, for a given number of replications, and writes one JSON line per run with the simulator version, truncated SHA-256 hashes of the model and the scenario, the seed, the replication index and the random-number mode. It also exports scenarios to Prosimos parameters and imports Prosimos parameters, e.g.\ from Simod.
+
+\subsection{Simulation model}
+A scenario specifies the arrival process (inter-arrival distribution and optionally a timetable during which cases arrive), the number of cases or a time horizon, roles with a number of resources, an hourly cost and a weekly timetable, and for each activity a duration distribution (fixed, exponential, uniform, triangular, normal, lognormal or gamma), a role, optional fixed cost, revenue, queue limit, repetition probability and value class (value-added VA, business-value-added BVA or non-value-added NVA). Branch probabilities are set on the outgoing flows of exclusive and inclusive gateways. The engine executes BPMN token semantics for sequence flows, exclusive, inclusive, parallel, complex and event-based gateways, embedded sub-processes, multi-instance activities, intermediate timer and message events and boundary events. Activities wait in a first-come-first-served queue for a free resource of their role; work outside the timetable is paused and resumed at the next opening. Results include cycle, waiting and processing times (mean and percentiles), throughput, work in progress, utilisation per role, cost and revenue, per-activity statistics and a simulated event log.
+
+\subsection{Statistical scenario comparison}
+\label{sec:stats}
+Each scenario is simulated in $R$ independent replications (default ten); replication $i$ of every scenario uses the same seed $s_i$. In the default \emph{keyed} mode, every random draw comes from a stream identified by its source (arrival, activity, gateway, boundary event or repetition) and the case number: the stream is a small-state generator (sfc32) seeded with a 32-bit hash of the replication seed, the source key and the case. A change to one activity therefore leaves the arrival times, branch decisions and durations of all other sources unchanged, which is what CRN require \cite{nelson1995}. A legacy mode with a single stream is kept for comparison (Section~\ref{sec:v5}). Warm-up is specified as simulated time; cases that arrive before the end of the warm-up are excluded from all statistics.
+
+For each output measure the tool reports the mean over replications with a 95\,\% Student-$t$ confidence interval. Scenarios are compared with the baseline by the paired differences $d_i = Y_i^{\text{scenario}} - Y_i^{\text{baseline}}$; the difference is reported with its confidence interval and marked as not significant when the interval contains zero. The same intervals appear in the app, in the PDF and Excel reports and in the JSON output.
+
+\subsection{Simulation-based value stream mapping}
+\label{sec:vsm}
+For every completed case the engine records the intervals in which an activity of the case was being processed, together with the value class of the activity and whether the execution was a repetition (rework). The lead time of the case, from arrival to completion, is then partitioned by sweeping its time line: at every instant the case is assigned to exactly one category, in the order of precedence VA, BVA, rework, NVA, waiting, where waiting means that no activity of the case is in process. With parallel branches, an instant in which a VA activity and an NVA activity run simultaneously counts as VA; the NVA work remains visible in the activity statistics but does not extend the lead time. By construction the categories add up to the lead time of each case. The value stream view reports the mean of each category, the process cycle efficiency $\text{PCE} = \text{VA}/\text{lead time}$ and the per-activity contributions; it also shows the classical linear figure, the sum of the activity times along the model, to make the difference visible.
+
+\section{Evaluation}
+\label{sec:eval}
+All experiments use the command-line runner of version 1.0.0 and are scripted in the paper repository; \texttt{make} recomputes data, tables and figures. Unless stated otherwise, 95\,\% confidence intervals are Student-$t$ intervals over independent replications.
+
+\subsection{V1: verification against exact queueing results}
+\label{sec:v1}
+We built BPMN models whose steady-state behaviour is known analytically: M/M/1 at utilisation $\rho\in\{0.5,0.8,0.9\}$, M/M/3 and M/M/10, M/D/1, M/U/1 and M/G/1 with lognormal and gamma service (Pollaczek--Khinchine), a tandem of two M/M/1 stations and a Jackson network with feedback \cite{jackson1957}. Each case ran \VoneReps{} replications of \VoneCases{} cases with a warm-up of 2000 mean inter-arrival times. Table~\ref{tab:v1} compares the simulated mean waiting time (or cycle time) with the exact value. All \VoneCovered{} intervals contain the exact value, and the largest relative error is \VoneWorst. Little's law $L=\lambda W$ \cite{little1961}, computed from the reported work in progress, throughput and cycle time, holds within \VoneLittle.
+
+\begin{table}[t]
+\centering\small
+\caption{V1: simulated versus exact mean times in seconds.}
+\label{tab:v1}
+\resizebox{\linewidth}{!}{\input{generated/v1_table}}
+\end{table}
+
+\subsection{V2: cross-check with Prosimos}
+\label{sec:v2}
+Five models (tandem, M/M/3, exclusive choice, parallel split and rework loop) were exported with the built-in converter and simulated by Prosimos 2.1.0 and by \tool{}, \VtwoReps{} replications of \VtwoCases{} cases each. The two engines use different random-number generators, so we compare means. Table~\ref{tab:v2} lists the relative difference with a Welch confidence interval. The intervals contain zero for \VtwoZero{} quantities and are within $\pm$\VtwoBound. Eleven of the thirteen point estimates of \tool{} are slightly higher (by 0.7--2.5\,\%), so a small systematic difference cannot be excluded at this sample size; it is of the order of the interval half-widths. This does not show that either engine is correct, but it shows that the two independent implementations agree on the semantics that both support. Features without a Prosimos counterpart, such as queue limits, revenue or boundary events, are listed by the exporter and were not used. One larger example model, the coffee shop shipped with the tool, could not be run by Prosimos (an internal error in its control-flow handling), which we report as a limitation of the cross-check.
+
+\begin{table}[t]
+\centering\small
+\caption{V2: \tool{} versus Prosimos, mean times in seconds and relative difference with 95\,\% confidence interval.}
+\label{tab:v2}
+\resizebox{\linewidth}{!}{\input{generated/v2_table}}
+\end{table}
+
+\subsection{V3: a model discovered from a public event log}
+\label{sec:v3}
+To exercise the engine on realistic input we used the BPI Challenge 2012 log \cite{bpic2012}, restricted to the work items (activities starting with \texttt{W\_}) with start and completion events, i.e.\ \VthreeCases{} cases. Simod 5.2.1 \cite{camargo2020} discovered a BPMN model with branching probabilities, resource profiles, calendars and duration distributions. Prosimos simulated this model directly; \tool{} imported the Prosimos parameters. Because \tool{} has one role and one duration per activity, the importer pools roles that share activities and merges the resource-specific durations of an activity into a gamma distribution with the same mean and variance; it reports \VthreeApprox{} such approximations. Table~\ref{tab:v3} compares both engines with the log. The mean cycle times of the two engines differ by \VthreeDiff. Both engines also produce about 17.9 work items per case against 7.4 in the log, so the discovered control flow repeats activities far more often than the real process; the two engines agree with each other on this as well. The cycle times of both engines are far below the cycle time in the log, because the discovered model does not represent the time cases spend waiting outside the recorded work items; this is a property of the discovered model, not of either engine, and illustrates the threats discussed by Blümel et al.\ \cite{bluemel2026}.
+
+\begin{table}[t]
+\centering\small
+\caption{V3: BPI Challenge 2012 work items, log versus simulation of the discovered model, ten replications each (mean $\pm$ half-width of the 95\,\% confidence interval).}
+\label{tab:v3}
+\IfFileExists{generated/v3_table.tex}{\input{generated/v3_table}}{}
+\end{table}
+
+\subsection{V4: value stream figures for non-linear processes}
+\label{sec:v4}
+Five models with closed-form lead time and partition were simulated with \VfourReps{} replications: a sequence of three activities, an exclusive choice (30/70), a parallel split, a rework loop with repetition probability 0.5 and a tandem with queues. Table~\ref{tab:v4} compares lead time and PCE with the exact values and with the PCE of a linear value stream map that adds the activity times along the model. The simulated figures agree with the exact ones within sampling error, and in every case the categories add up to the lead time (largest deviation $\VfourPartition$\,s). The linear map overstates PCE for the choice (because it adds both branches), understates it for the parallel split (because it adds parallel work) and ignores rework.
+
+\begin{table}[t]
+\centering\small
+\caption{V4: lead time (s), PCE and rework time (s): exact, simulated and from a linear value stream map.}
+\label{tab:v4}
+\resizebox{\linewidth}{!}{\input{generated/v4_table}}
+\end{table}
+
+\subsection{V5: single runs versus replications}
+\label{sec:v5}
+We took two decision problems: the coffee-shop example (four alternatives to the baseline) and an office process with a baseline and four staffing and duration options. The true ranking was obtained from 2000 replications per option. We then repeated, \VfiveN{} times, the decision ``pick the option with the lowest mean cycle time'' with (a) one run per option, all with the same seed and one random stream, (b) one run per option with the same seed and per-source streams, (c) one run per option with independent seeds and (d) the mean of ten paired replications. The single-run and replicated decisions are drawn from the same replications that define the reference ranking; with 2000 replications per option the influence on the reference is small but not zero. Table~\ref{tab:v5} reports how often the true best option was chosen. On the office process, one run per option picks a wrong option in \VfiveOfficeIndep{} of the trials with independent seeds, \VfiveOfficeSingle{} with a shared seed and \VfiveOfficeKeyed{} with per-source streams; ten paired replications reduce this to \VfiveOfficeRep. The paired confidence intervals of the tool never declared a wrong direction ($\le$\VfiveWrong) and returned ``not significant'' in at most \VfiveNs{} of the comparisons with the baseline. Table~\ref{tab:v5var} shows why: per-source streams reduce the variance of differences by up to a factor of \VfiveRatio{} compared with a single stream.
+
+\begin{table}[t]
+\centering\small
+\caption{V5: share of trials in which the truly best option is chosen.}
+\label{tab:v5}
+\resizebox{\linewidth}{!}{\input{generated/v5_table}}
+\end{table}
+
+\begin{table}[t]
+\centering\small
+\caption{V5: variance of the difference to the baseline in mean cycle time (s$^2$) for one run per option.}
+\label{tab:v5var}
+\resizebox{\linewidth}{!}{\input{generated/v5_variance}}
+\end{table}
+
+\subsection{V6: performance}
+\label{sec:v6}
+Figure~\ref{fig:v6} shows the run time of the command-line runner (Node.js \VsixNode, \VsixCpu) as a function of the number of cases, the length of a sequence and the number of parallel branches. Run time grows approximately linearly with the number of cases; one million cases of a five-activity sequence take \VsixMillion\,s, about \VsixRate{} cases per second, with throughput somewhat lower than at $10^5$ cases because of the growing per-case records kept for the result. Run time grows slightly faster than linearly with the number of activities or parallel branches per case, since every token event is a heap operation on a larger event list and more per-activity statistics are kept. The browser uses the same engine in a Web Worker.
+
+\begin{figure}[t]
+\centering
+\IfFileExists{generated/v6_performance.pdf}{\includegraphics[width=\linewidth]{generated/v6_performance}}{}
+\caption{V6: run time by number of cases, sequence length and number of parallel branches.}
+\label{fig:v6}
+\end{figure}
+
+\subsection{V7: comparison with other tools}
+\label{sec:v7}
+\input{v7}
+
+\section{Discussion and limitations}
+\label{sec:discussion}
+The verification covers steady-state queueing behaviour, the semantics shared with Prosimos and the VSM partition; it does not cover every BPMN construct the engine executes. Event-based gateways, inclusive gateways, multi-instance activities and boundary events are covered by unit tests but not by an external reference. The resource model is coarser than that of Prosimos: there are no individual resource calendars, no resource-specific durations, no batching and no prioritisation, so models discovered by Simod have to be approximated (Section~\ref{sec:v3}). The tool reports confidence intervals and paired differences but leaves the choice among several significant options to the user; ranking-and-selection procedures \cite{kim2001} would be a natural extension. The decision experiment (V5) uses two problems and illustrates the effect of single runs; it is not a general estimate of error rates. The VSM categories depend on the value classes assigned by the modeller, and the precedence rule for parallel work is a design choice that we make explicit. No user study was conducted.
+
+\section{Conclusion}
+\label{sec:conclusion}
+\tool{} brings replicated, CRN-based scenario comparison and value stream figures for non-linear processes into a BPMN editor that runs in the browser and in the Camunda Modeler. The evaluation shows agreement with exact queueing results and with an independent engine, correct VSM figures for choices, parallel branches and loops, and a clear reduction of wrong decisions compared with single runs. The software, the experiments and the data are available under Apache-2.0.
+
+\section*{Software and data availability}
+\begin{sloppypar}
+Software: \url{https://github.com/BFH-Process-Digitalization/process-simulator} (Apache-2.0); web application: \url{https://bfh-process-digitalization.github.io/process-simulator/}. The results reported here were produced with simulator commit \texttt{ee57552}. Experiments, generated models, raw runs and this manuscript: \url{https://github.com/BFH-Process-Digitalization/process-simulator-paper}. The BPI Challenge 2012 log is not redistributed; the scripts download it from 4TU.ResearchData \cite{bpic2012}.
+\end{sloppypar}
+
+\section*{CRediT authorship contribution statement}
+\textbf{Moritz Maier:} Conceptualization, Software, Validation, Writing -- original draft, Writing -- review \& editing.
+
+\section*{Declaration of competing interest}
+The author declares no competing interests.
+
+\bibliographystyle{elsarticle-num}
+\bibliography{references}
+\end{document}

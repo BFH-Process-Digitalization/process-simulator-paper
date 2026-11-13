@@ -98,7 +98,7 @@ def v5(r):
         names = {s["id"]: s["name"] for s in p["scenarios"]}
         for v in p["varianceOfDifference"]:
             best_ratio = max(best_ratio, v["singleStream"] / v["keyed"])
-            lines.append(f"{p['name']} & {names[v['id']]} & {v['trueDiff']:+.1f} & {v['independent']:.0f} & {v['singleStream']:.0f} & {v['keyed']:.0f} \\\\")
+            lines.append(f"{tex(p['name'])} & {tex(names[v['id']])} & {v['trueDiff']:+.1f} & {v['independent']:.0f} & {v['singleStream']:.0f} & {v['keyed']:.0f} \\\\")
     lines += [r"\bottomrule", r"\end{tabular}"]
     (OUT / "v5_variance.tex").write_text("\n".join(lines) + "\n")
     office = r["problems"][1]

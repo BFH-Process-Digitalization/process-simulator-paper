@@ -1,0 +1,163 @@
+{
+  "reps": 20,
+  "warmup": 120000,
+  "cases": 50000,
+  "rows": [
+    {
+      "model": "tandem",
+      "label": "Sequence, two M/M/1 stations",
+      "metric": "cycle",
+      "own": 360.57189262092027,
+      "own_half": 4.987556003471137,
+      "prosimos": 357.70245462346975,
+      "prosimos_half": 5.221549856622814,
+      "rel_diff": 0.008021857161900077,
+      "rel_lo": -0.011504248228105895,
+      "rel_hi": 0.02754796255190605
+    },
+    {
+      "model": "tandem",
+      "label": "Sequence, two M/M/1 stations",
+      "metric": "wait.t1",
+      "own": 80.12173880813347,
+      "own_half": 1.0553472056211781,
+      "prosimos": 79.6015292116088,
+      "prosimos_half": 1.3306024992221024,
+      "rel_diff": 0.006535170890269782,
+      "rel_lo": -0.014135602844969113,
+      "rel_hi": 0.02720594462550868
+    },
+    {
+      "model": "tandem",
+      "label": "Sequence, two M/M/1 stations",
+      "metric": "wait.t2",
+      "own": 192.4744531581793,
+      "own_half": 4.543499424368342,
+      "prosimos": 190.06523522646665,
+      "prosimos_half": 4.5717725002886835,
+      "rel_diff": 0.01267574224629777,
+      "rel_lo": -0.020124378211390934,
+      "rel_hi": 0.045475862703986465
+    },
+    {
+      "model": "mm3",
+      "label": "One activity, three servers",
+      "metric": "cycle",
+      "own": 301.3483429950504,
+      "own_half": 5.1088512540968525,
+      "prosimos": 298.703289765196,
+      "prosimos_half": 4.552089452080273,
+      "rel_diff": 0.00885511917841151,
+      "rel_lo": -0.013311197270181005,
+      "rel_hi": 0.031021435627004025
+    },
+    {
+      "model": "mm3",
+      "label": "One activity, three servers",
+      "metric": "wait.t1",
+      "own": 157.3352934903635,
+      "own_half": 4.836979781703612,
+      "prosimos": 154.48015573118587,
+      "prosimos_half": 4.370455684985255,
+      "rel_diff": 0.01848222993862022,
+      "rel_lo": -0.022347295858304007,
+      "rel_hi": 0.05931175573554445
+    },
+    {
+      "model": "xor",
+      "label": "Exclusive choice 30/70, shared role",
+      "metric": "cycle",
+      "own": 289.17494330300747,
+      "own_half": 6.405163882485563,
+      "prosimos": 292.05910602240965,
+      "prosimos_half": 5.207670194416053,
+      "rel_diff": -0.009875270655594223,
+      "rel_lo": -0.03725092014931783,
+      "rel_hi": 0.017500378838129382
+    },
+    {
+      "model": "xor",
+      "label": "Exclusive choice 30/70, shared role",
+      "metric": "wait.a",
+      "own": 236.51059321457942,
+      "own_half": 6.576976426917735,
+      "prosimos": 239.69817105393676,
+      "prosimos_half": 5.261630388715975,
+      "rel_diff": -0.013298298544965028,
+      "rel_lo": -0.04733861621330289,
+      "rel_hi": 0.020742019123372833
+    },
+    {
+      "model": "xor",
+      "label": "Exclusive choice 30/70, shared role",
+      "metric": "wait.b",
+      "own": 237.40856672392414,
+      "own_half": 6.320874337110959,
+      "prosimos": 240.20066900111314,
+      "prosimos_half": 5.180698637567015,
+      "rel_diff": -0.011624040385899438,
+      "rel_lo": -0.0445745776973427,
+      "rel_hi": 0.02132649692554383
+    },
+    {
+      "model": "and",
+      "label": "Parallel split, two roles",
+      "metric": "cycle",
+      "own": 246.60132848961652,
+      "own_half": 3.4504358892309277,
+      "prosimos": 242.823348103118,
+      "prosimos_half": 3.493417210424888,
+      "rel_diff": 0.0155585548754321,
+      "rel_lo": -0.003999535384543866,
+      "rel_hi": 0.03511664513540806
+    },
+    {
+      "model": "and",
+      "label": "Parallel split, two roles",
+      "metric": "wait.a",
+      "own": 135.96836821032056,
+      "own_half": 2.7946358885468006,
+      "prosimos": 133.4022037619783,
+      "prosimos_half": 2.651316375483816,
+      "rel_diff": 0.01923629727227674,
+      "rel_lo": -0.008695988693360907,
+      "rel_hi": 0.04716858323791438
+    },
+    {
+      "model": "and",
+      "label": "Parallel split, two roles",
+      "metric": "wait.b",
+      "own": 141.7891976712562,
+      "own_half": 2.5943855789384416,
+      "prosimos": 138.33517152524885,
+      "prosimos_half": 3.0322880256801086,
+      "rel_diff": 0.024968531920871073,
+      "rel_lo": -0.002955476225512974,
+      "rel_hi": 0.05289254006725512
+    },
+    {
+      "model": "loop",
+      "label": "Rework loop p = 0.25",
+      "metric": "cycle",
+      "own": 243.81763527901663,
+      "own_half": 4.105017212105882,
+      "prosimos": 239.83135844397242,
+      "prosimos_half": 3.9617041635630583,
+      "rel_diff": 0.01662116605979802,
+      "rel_lo": -0.006387077752667244,
+      "rel_hi": 0.03962940987226329
+    },
+    {
+      "model": "loop",
+      "label": "Rework loop p = 0.25",
+      "metric": "wait.work",
+      "own": 146.82105952944465,
+      "own_half": 3.0526000210654014,
+      "prosimos": 143.76140877527897,
+      "prosimos_half": 2.958790614784829,
+      "rel_diff": 0.021282837864703936,
+      "rel_lo": -0.007319744843822692,
+      "rel_hi": 0.04988542057323056
+    }
+  ]
+}

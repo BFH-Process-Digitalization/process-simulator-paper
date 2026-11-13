@@ -1,0 +1,24 @@
+Table~\ref{tab:v7} positions \tool{} against two openly documented research tools that serve the same purpose, BIMP (the online front end of the QBP simulator) and Prosimos with Simod. The entries for the other tools are taken from their public documentation (BIMP web site, Prosimos and Simod repositories, consulted in November 2026) and from the publications cited; ``not documented'' means that we did not find the feature described, not that it is absent. Commercial suites with simulation modules were not included because their feature sets could not be checked from public sources in a comparable way; surveys of such tools are available \cite{pereira2016,rosenthal2021}.
+
+\begin{table}[t]
+\centering\small
+\caption{V7: feature comparison based on public documentation.}
+\label{tab:v7}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llll}
+\toprule
+Feature & \tool{} & BIMP (QBP) & Prosimos / Simod \\
+\midrule
+Runs in the browser, no installation & yes & yes (upload of a BPMN file) & no (Python) \\
+Integrated BPMN editor & yes (bpmn-js, Camunda Modeler plugin) & no, external modeller & no, external modeller \\
+Command-line / batch use & yes & not documented & yes \\
+Discovery from event logs & no (imports Simod output) & no & yes (Simod) \cite{camargo2020} \\
+Differentiated resources (individual calendars and durations) & no, roles & no & yes \cite{lopezpintado2022} \\
+Replications with confidence intervals & yes & not documented & not documented \\
+Common random numbers across scenarios & yes, per-source streams & not documented & not documented \\
+Paired scenario comparison & yes & not documented & not documented \\
+Value stream figures (VA/BVA/NVA, PCE) & yes, simulation-based & no & no \\
+Licence & Apache-2.0 & not documented & see repositories \\
+\bottomrule
+\end{tabular}}
+\end{table}

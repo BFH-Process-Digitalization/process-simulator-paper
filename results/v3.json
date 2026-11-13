@@ -1,0 +1,53 @@
+{
+ "log": {
+  "cycle_h": 252.01679738534511,
+  "cycle_median_h": 194.70963666666668,
+  "work_h": 1.4867464773969372,
+  "events_per_case": 7.390804597701149,
+  "activity_freq": {
+   "W_Afhandelen leads": 0.6106451278865072,
+   "W_Beoordelen fraude": 0.027958993476234855,
+   "W_Completeren aanvraag": 2.434710572641607,
+   "W_Nabellen incomplete dossiers": 1.1804908356632495,
+   "W_Nabellen offertes": 2.320078699389044,
+   "W_Valideren aanvraag": 0.8169203686445066
+  }
+ },
+ "cases": 9657,
+ "reps": 10,
+ "approximations": [
+  "approximated: roles Role 1_profile, Role 2_profile, Role 3_profile, Role 4_profile share activities and are pooled into one role",
+  "approximated: role Role 1_profile: 3 different calendars, using the most common",
+  "approximated: W_Afhandelen leads: 57 resource-specific durations merged into one gamma with the same mean and variance",
+  "approximated: W_Beoordelen fraude: 58 resource-specific durations merged into one gamma with the same mean and variance",
+  "approximated: W_Completeren aanvraag: 57 resource-specific durations merged into one gamma with the same mean and variance",
+  "approximated: W_Nabellen incomplete dossiers: 56 resource-specific durations merged into one gamma with the same mean and variance",
+  "approximated: W_Nabellen offertes: 57 resource-specific durations merged into one gamma with the same mean and variance",
+  "approximated: W_Valideren aanvraag: 57 resource-specific durations merged into one gamma with the same mean and variance"
+ ],
+ "Prosimos:cycle_h": {
+  "mean": 3.3980822383151343,
+  "half": 0.06373511857536193
+ },
+ "This tool:cycle_h": {
+  "mean": 3.419393889130654,
+  "half": 0.038389841519685046
+ },
+ "Prosimos:events_per_case": {
+  "mean": 17.82102102102102,
+  "half": 0.061957773149986115
+ },
+ "This tool:events_per_case": {
+  "mean": 17.875168271719996,
+  "half": 0.04854036637695561
+ },
+ "table": "\\begin{tabular}{lrrr}\n\\toprule\nMeasure & Log & Prosimos & This tool \\\\\n\\midrule\nmean cycle time (h) & 252.02 & 3.40 $\\pm$ 0.06 & 3.42 $\\pm$ 0.04 \\\\\nwork items per case & 7.39 & 17.82 $\\pm$ 0.06 & 17.88 $\\pm$ 0.05 \\\\\n\\bottomrule\n\\end{tabular}\n",
+ "macros": {
+  "VthreeCases": "9\\,657",
+  "VthreeLogCycle": "252.0",
+  "VthreeOwnCycle": "3.4",
+  "VthreeProCycle": "3.4",
+  "VthreeDiff": "+0.6\\,\\%",
+  "VthreeApprox": "8"
+ }
+}
