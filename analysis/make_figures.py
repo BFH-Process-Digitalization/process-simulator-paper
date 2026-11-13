@@ -156,8 +156,8 @@ def v6(r):
     macro("VsixNode", r["node"])
     if b:
         macro("VsixReps", str(b["reps"]))
-        macro("VsixChromium", b["browsers"]["Chromium"])
-        macro("VsixFirefox", b["browsers"]["Firefox"])
+        macro("VsixChromium", b["browsers"]["Chromium"].split(".")[0])
+        macro("VsixFirefox", b["browsers"]["Firefox"].split(".")[0])
         macro("VsixMismatches", str(b["mismatches"]))
         macro("VsixCompared", str(len(b["rows"])))
         for name, key in [("Chromium", "Chromium"), ("Firefox", "Firefox")]:
