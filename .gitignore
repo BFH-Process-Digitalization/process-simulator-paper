@@ -16,3 +16,4 @@ paper/*.spl
 __pycache__/
 node_modules/
 data/v6_browser/
+tmp/

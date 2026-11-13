@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="defs_and2" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="and2" isExecutable="false">
+    <bpmn:startEvent id="start" name="start">
+      <bpmn:outgoing>f1_start_split</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:parallelGateway id="split" name="split">
+      <bpmn:incoming>f1_start_split</bpmn:incoming>
+      <bpmn:outgoing>f2_split_a</bpmn:outgoing>
+      <bpmn:outgoing>f4_split_b</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="a" name="a">
+      <bpmn:incoming>f2_split_a</bpmn:incoming>
+      <bpmn:outgoing>f3_a_join</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="b" name="b">
+      <bpmn:incoming>f4_split_b</bpmn:incoming>
+      <bpmn:outgoing>f5_b_join</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="join" name="join">
+      <bpmn:incoming>f3_a_join</bpmn:incoming>
+      <bpmn:incoming>f5_b_join</bpmn:incoming>
+      <bpmn:outgoing>f6_join_end</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:endEvent id="end" name="end">
+      <bpmn:incoming>f6_join_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1_start_split" sourceRef="start" targetRef="split" />
+    <bpmn:sequenceFlow id="f2_split_a" sourceRef="split" targetRef="a" />
+    <bpmn:sequenceFlow id="f3_a_join" sourceRef="a" targetRef="join" />
+    <bpmn:sequenceFlow id="f4_split_b" sourceRef="split" targetRef="b" />
+    <bpmn:sequenceFlow id="f5_b_join" sourceRef="b" targetRef="join" />
+    <bpmn:sequenceFlow id="f6_join_end" sourceRef="join" targetRef="end" />
+  </bpmn:process>
+</bpmn:definitions>

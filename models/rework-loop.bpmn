@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="defs_loop" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="loop" isExecutable="false">
+    <bpmn:startEvent id="start" name="start">
+      <bpmn:outgoing>f1_start_merge</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="merge" name="merge">
+      <bpmn:incoming>f1_start_merge</bpmn:incoming>
+      <bpmn:incoming>f4_check_merge</bpmn:incoming>
+      <bpmn:outgoing>f2_merge_work</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="work" name="work">
+      <bpmn:incoming>f2_merge_work</bpmn:incoming>
+      <bpmn:outgoing>f3_work_check</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="check" name="check">
+      <bpmn:incoming>f3_work_check</bpmn:incoming>
+      <bpmn:outgoing>f4_check_merge</bpmn:outgoing>
+      <bpmn:outgoing>f5_check_end</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="end" name="end">
+      <bpmn:incoming>f5_check_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1_start_merge" sourceRef="start" targetRef="merge" />
+    <bpmn:sequenceFlow id="f2_merge_work" sourceRef="merge" targetRef="work" />
+    <bpmn:sequenceFlow id="f3_work_check" sourceRef="work" targetRef="check" />
+    <bpmn:sequenceFlow id="f4_check_merge" sourceRef="check" targetRef="merge" />
+    <bpmn:sequenceFlow id="f5_check_end" sourceRef="check" targetRef="end" />
+  </bpmn:process>
+</bpmn:definitions>

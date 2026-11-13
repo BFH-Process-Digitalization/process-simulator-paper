@@ -32,6 +32,8 @@ Business process simulation \sep BPMN \sep Discrete-event simulation \sep Common
 
 \section{Introduction}
 \label{sec:intro}
+A coffee-shop owner wants to know whether a second barista or faster order taking shortens the queue more. She draws the process in BPMN, runs each option once in a simulation tool, and compares the reported mean cycle times --- a procedure that, in the decision experiment of this paper, picks the wrong option in up to \VfiveOfficeIndep{} of the trials (Section~\ref{sec:v5}). Nothing about the model differs between the runs; only the random numbers do.
+
 Business process simulation (BPS) estimates the effect of changes such as additional staff, shorter activities or different routing before they are implemented \citep{vanderaalst2015,dumas2018}. Many BPM suites contain a simulator, and dedicated engines exist in research, notably BIMP (QBP) and Prosimos \citep{lopezpintado2022,lopezpintado2024}, together with tools that discover simulation models from event logs \citep{rozinat2009,camargo2020}. Surveys of tool support report heterogeneous and often limited simulation capabilities \citep{pereira2016,rosenthal2021,laue2016}.
 
 Two practical gaps motivated the tool presented here. First, what-if results are commonly read from a single run per scenario. The statistical remedies, independent replications, confidence intervals and common random numbers (CRN), are textbook simulation methodology \citep{law2015,nelson1995,kim2001}, but they are rarely part of the modelling workflow of BPMN tools. Second, value stream mapping (VSM) \citep{rother1999} is widely used to discuss lead time and waste, and simulation-based VSM is established in manufacturing \citep{lian2007,solding2009}; process mining has been used to obtain value stream maps from logs \citep{knoll2019}. A value stream map, however, assumes a linear sequence of steps, whereas BPMN models contain exclusive choices, parallel branches and loops.
@@ -58,6 +60,15 @@ This paper describes \tool{} and, mainly, its verification and validation. We do
 \section{The tool}
 \label{sec:tool}
 \subsection{Architecture}
+Figure~\ref{fig:app} shows the application in simulate mode on the coffee-shop example shipped with the tool: the model carries annotations such as durations and branch probabilities, scenario tabs sit above the diagram, and the inspector on the right holds the demand, resource and activity parameters of the selected scenario.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/app-simulate}
+\caption{\tool{} in the browser on the shipped coffee-shop example. Above the diagram, tabs switch between the baseline and the stored what-if scenarios; activity annotations show duration and role; the inspector edits the arrival process, resource pools and per-activity parameters of the selected scenario.}
+\label{fig:app}
+\end{figure}
+
 \tool{} is a TypeScript application. The modeller is bpmn-js; simulation parameters are stored inside the BPMN file as an extension element, so a model and its scenarios travel as one file. The discrete-event engine has no browser dependencies and runs in a Web Worker in the browser, in the Camunda Modeler plugin and in Node.js through the command-line runner \texttt{procsim}. The runner reads a BPMN file, runs one or all stored scenarios, or a scenario given as JSON, for a given number of replications, and writes one JSON line per run with the simulator version, truncated SHA-256 hashes of the model and the scenario, the seed, the replication index and the random-number mode. It also exports scenarios to Prosimos parameters and imports Prosimos parameters, e.g.\ from Simod.
 
 \subsection{Simulation model}
@@ -71,11 +82,18 @@ For each output measure the tool reports the mean over replications with a 95\,\
 
 \subsection{Simulation-based value stream mapping}
 \label{sec:vsm}
-For every completed case the engine records the intervals in which an activity of the case was being processed, together with the value class of the activity and whether the execution was a repetition (rework). The lead time of the case, from arrival to completion, is then partitioned by sweeping its time line: at every instant the case is assigned to exactly one category, in the order of precedence VA, BVA, rework, NVA, waiting, where waiting means that no activity of the case is in process. With parallel branches, an instant in which a VA activity and an NVA activity run simultaneously counts as VA; the NVA work remains visible in the activity statistics but does not extend the lead time. By construction the categories add up to the lead time of each case. The value stream view reports the mean of each category, the process cycle efficiency $\text{PCE} = \text{VA}/\text{lead time}$ and the per-activity contributions; it also shows the classical linear figure, the sum of the activity times along the model, to make the difference visible.
+For every completed case the engine records the intervals in which an activity of the case was being processed, together with the value class of the activity and whether the execution was a repetition (rework). The lead time of the case, from arrival to completion, is then partitioned by sweeping its time line: at every instant the case is assigned to exactly one category, in the order of precedence VA, BVA, rework, NVA, waiting, where waiting means that no activity of the case is in process. With parallel branches, an instant in which a VA activity and an NVA activity run simultaneously counts as VA; the NVA work remains visible in the activity statistics but does not extend the lead time. By construction the categories add up to the lead time of each case. The value stream view reports the mean of each category, the process cycle efficiency $\text{PCE} = \text{VA}/\text{lead time}$ and the per-activity contributions; it also shows the classical linear figure, the sum of the activity times along the model, to make the difference visible. Figure~\ref{fig:vsm} shows the view on the simulated coffee-shop baseline.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/value-stream}
+\caption{Simulation-based value stream map of the coffee-shop example. The bar partitions the mean lead time of 16\,min into value-adding, business-value-adding, waste and waiting; the bottleneck activity is marked. Below, the upper line gives waiting and the lower line working time per activity. A linear map would add the durations of both coffee branches and report a higher PCE than the simulated 22\,\%.}
+\label{fig:vsm}
+\end{figure}
 
 \section{Evaluation}
 \label{sec:eval}
-All experiments use the command-line runner of version 1.0.0 and are scripted in the paper repository; \texttt{make} recomputes data, tables and figures. Unless stated otherwise, 95\,\% confidence intervals are Student-$t$ intervals over independent replications.
+All experiments use the command-line runner of version 1.0.0 and are scripted in the paper repository; \texttt{make} recomputes data, tables and figures. Unless stated otherwise, 95\,\% confidence intervals are Student-$t$ intervals over independent replications. The order of the experiments follows the question that opened this paper: Sections~\ref{sec:v1}--\ref{sec:v4} establish that the engine and its value stream figures can be trusted, Section~\ref{sec:v5} measures how often the single-run shortcut fails, and Sections~\ref{sec:v6}--\ref{sec:v7} place run time and feature coverage in context. Appendix~\ref{app:models} shows the test models.
 
 \subsection{V1: verification against exact queueing results}
 \label{sec:v1}
@@ -123,7 +141,7 @@ Five models with closed-form lead time and partition were simulated with \VfourR
 
 \subsection{V5: single runs versus replications}
 \label{sec:v5}
-We took two decision problems: the coffee-shop example (four alternatives to the baseline) and an office process with a baseline and four staffing and duration options. The true ranking was obtained from 2000 replications per option. We then repeated, \VfiveN{} times, the decision ``pick the option with the lowest mean cycle time'' with (a) one run per option, all with the same seed and one random stream, (b) one run per option with the same seed and per-source streams, (c) one run per option with independent seeds and (d) the mean of ten paired replications. The single-run and replicated decisions are drawn from the same replications that define the reference ranking; with 2000 replications per option the influence on the reference is small but not zero. Table~\ref{tab:v5} reports how often the true best option was chosen. On the office process, one run per option picks a wrong option in \VfiveOfficeIndep{} of the trials with independent seeds, \VfiveOfficeSingle{} with a shared seed and \VfiveOfficeKeyed{} with per-source streams; ten paired replications reduce this to \VfiveOfficeRep. The paired confidence intervals of the tool never declared a wrong direction ($\le$\VfiveWrong) and returned ``not significant'' in at most \VfiveNs{} of the comparisons with the baseline. Table~\ref{tab:v5var} shows why: per-source streams reduce the variance of differences by up to a factor of \VfiveRatio{} compared with a single stream.
+We return to the question that opened this paper: which option is best, and how often does one run per option answer it wrongly? We took two decision problems: the coffee-shop example (four alternatives to the baseline) and an office process with a baseline and four staffing and duration options. The true ranking was obtained from 2000 replications per option. We then repeated, \VfiveN{} times, the decision ``pick the option with the lowest mean cycle time'' with (a) one run per option, all with the same seed and one random stream, (b) one run per option with the same seed and per-source streams, (c) one run per option with independent seeds and (d) the mean of ten paired replications. The single-run and replicated decisions are drawn from the same replications that define the reference ranking; with 2000 replications per option the influence on the reference is small but not zero. Table~\ref{tab:v5} reports how often the true best option was chosen. On the office process, one run per option picks a wrong option in \VfiveOfficeIndep{} of the trials with independent seeds, \VfiveOfficeSingle{} with a shared seed and \VfiveOfficeKeyed{} with per-source streams; ten paired replications reduce this to \VfiveOfficeRep. The paired confidence intervals of the tool never declared a wrong direction ($\le$\VfiveWrong) and returned ``not significant'' in at most \VfiveNs{} of the comparisons with the baseline. Table~\ref{tab:v5var} shows why: per-source streams reduce the variance of differences by up to a factor of \VfiveRatio{} compared with a single stream. For the coffee-shop owner of the introduction this is the difference between acting on a coin flip and acting on evidence: ten paired replications answer the question correctly in all but \VfiveOfficeRep{} of the trials.
 
 \begin{table}[t]
 \centering\small
@@ -160,11 +178,11 @@ The verification covers steady-state queueing behaviour, the semantics shared wi
 
 \section{Conclusion}
 \label{sec:conclusion}
-\tool{} brings replicated, CRN-based scenario comparison and value stream figures for non-linear processes into a BPMN editor that runs in the browser and in the Camunda Modeler. The evaluation shows agreement with exact queueing results and with an independent engine, correct VSM figures for choices, parallel branches and loops, and a clear reduction of wrong decisions compared with single runs. The software, the experiments and the data are available under Apache-2.0.
+The question that opened this paper now has a defensible answer: a single run per scenario decides by chance, whereas replicated and paired comparisons decide by evidence. \tool{} brings replicated, CRN-based scenario comparison and value stream figures for non-linear processes into a BPMN editor that runs in the browser and in the Camunda Modeler. The evaluation shows agreement with exact queueing results and with an independent engine, correct VSM figures for choices, parallel branches and loops, and a clear reduction of wrong decisions compared with single runs. The software, the experiments and the data are available under Apache-2.0.
 
 \section*{Software and data availability}
 \begin{sloppypar}
-Software: \url{https://github.com/BFH-Process-Digitalization/process-simulator} (Apache-2.0); web application: \url{https://bfh-process-digitalization.github.io/process-simulator/}. The results reported here were produced with simulator commit \texttt{b9e604f}. Experiments, generated models, raw runs and this manuscript: \url{https://github.com/BFH-Process-Digitalization/process-simulator-paper}. The BPI Challenge 2012 log is not redistributed; the scripts download it from 4TU.ResearchData \citep{bpic2012}.
+Software: \url{https://github.com/BFH-Process-Digitalization/process-simulator} (Apache-2.0); web application: \url{https://bfh-process-digitalization.github.io/process-simulator/}. The results reported here were produced with simulator release 1.0.0 (tag \texttt{v1.0.0}). Experiments, generated models, raw runs and this manuscript: \url{https://github.com/BFH-Process-Digitalization/process-simulator-paper}. The BPI Challenge 2012 log is not redistributed; the scripts download it from 4TU.ResearchData \citep{bpic2012}.
 \end{sloppypar}
 
 \section*{CRediT authorship contribution statement}
@@ -172,6 +190,30 @@ Software: \url{https://github.com/BFH-Process-Digitalization/process-simulator} 
 
 \section*{Declaration of competing interest}
 The author declares no competing interests.
+
+\appendix
+\section{Test models}
+\label{app:models}
+The BPMN models used in V1, V2, V4 and V5 are generated by the model builder in \url{experiments/lib/bpmn.mjs} and stored in the \texttt{models/} directory of the paper repository; Figure~\ref{fig:models} shows them as rendered by bpmn-js. The BPI Challenge 2012 model of Section~\ref{sec:v3} is discovered by Simod 5.2.1 from the event log and regenerated by \texttt{make v3}; it is too large to reproduce legibly here.
+
+\begin{figure}[t]
+\centering
+\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/single-station}\\(a) single station (V1)\end{minipage}\hfill
+\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/tandem}\\(b) tandem of two stations (V1, V2, V4)\end{minipage}\\[1em]
+\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/three-step}\\(c) three-step sequence (V4, V5 office process)\end{minipage}\hfill
+\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/exclusive-choice}\\(d) exclusive choice (V2, V4)\end{minipage}\\[1em]
+\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/parallel-split}\\(e) parallel split (V2, V4)\end{minipage}\hfill
+\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/rework-loop}\\(f) rework loop, also the Jackson feedback network (V1, V2, V4)\end{minipage}
+\caption{Generated BPMN test models used in the experiments; sources in \texttt{models/}.}
+\label{fig:models}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/models/coffee-shop}
+\caption{The coffee-shop example shipped with the tool, used in the Prosimos cross-check (V2) and the decision experiment (V5).}
+\label{fig:coffeemodel}
+\end{figure}
 
 \bibliographystyle{apacite}
 \bibliography{references}

@@ -5,6 +5,9 @@
   "description": "Experiments and manuscript for the Process Simulator tool paper",
   "license": "Apache-2.0",
   "devDependencies": {
+    "bpmn-auto-layout": "^1.3.0",
+    "bpmn-js": "^18.31.1",
+    "esbuild": "^0.21.5",
     "playwright-core": "1.52.0"
   }
 }

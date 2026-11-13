@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="defs_seq1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="seq1" isExecutable="false">
+    <bpmn:startEvent id="start" name="start">
+      <bpmn:outgoing>f1_start_t1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="t1" name="t1">
+      <bpmn:incoming>f1_start_t1</bpmn:incoming>
+      <bpmn:outgoing>f2_t1_end</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="end" name="end">
+      <bpmn:incoming>f2_t1_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1_start_t1" sourceRef="start" targetRef="t1" />
+    <bpmn:sequenceFlow id="f2_t1_end" sourceRef="t1" targetRef="end" />
+  </bpmn:process>
+</bpmn:definitions>

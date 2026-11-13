@@ -3,13 +3,13 @@
 #   make paper      PDF from the results in results/
 
 SIMULATOR_REPO ?= https://github.com/BFH-Process-Digitalization/process-simulator.git
-SIMULATOR_REF  ?= feature/experiments
+SIMULATOR_REF  ?= v1.0.0
 SIM            := tools/process-simulator
 CLI            := $(SIM)/dist-cli/procsim.mjs
 PY             ?= .venv/bin/python
 SIMOD          ?= .venv-simod/bin/simod
 
-.PHONY: all simulator env experiments v1 v2 v3 v4 v5 v6 figures paper clean
+.PHONY: all simulator env experiments v1 v2 v3 v4 v5 v6 figures models screenshots paper clean
 
 all: experiments figures paper
 
@@ -42,8 +42,16 @@ v6: $(CLI)
 	node experiments/v6_performance.mjs
 	node experiments/v6_browser.mjs
 
-figures:
+figures: models
 	$(PY) analysis/make_figures.py
+
+# renders the BPMN test models in models/ to paper/figures/models/
+models:
+	node analysis/render_models.mjs
+
+# screenshots of the web app; needs `vite preview` serving the built simulator on APP_URL
+screenshots:
+	node analysis/screenshots.mjs
 
 paper: figures
 	cd paper && latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
