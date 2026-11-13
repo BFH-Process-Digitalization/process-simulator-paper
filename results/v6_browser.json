@@ -11,8 +11,8 @@
       "series": "cases",
       "x": 1000,
       "cases": 1000,
-      "ms": 18.900000005960464,
-      "casesPerSecond": 52910.052893366745,
+      "ms": 6.100000023841858,
+      "casesPerSecond": 163934.42558877027,
       "sameAsNode": true
     },
     {
@@ -20,8 +20,8 @@
       "series": "cases",
       "x": 10000,
       "cases": 10000,
-      "ms": 99,
-      "casesPerSecond": 101010.101010101,
+      "ms": 49.199999928474426,
+      "casesPerSecond": 203252.0328158073,
       "sameAsNode": true
     },
     {
@@ -29,8 +29,8 @@
       "series": "cases",
       "x": 100000,
       "cases": 100000,
-      "ms": 751.7999999821186,
-      "casesPerSecond": 133014.09949771012,
+      "ms": 605.2999999523163,
+      "casesPerSecond": 165207.33521869767,
       "sameAsNode": true
     },
     {
@@ -38,8 +38,8 @@
       "series": "cases",
       "x": 1000000,
       "cases": 1000000,
-      "ms": 7443.199999988079,
-      "casesPerSecond": 100763.24699070309,
+      "ms": 8238.600000023842,
+      "casesPerSecond": 121379.84609000389,
       "sameAsNode": true
     },
     {
@@ -47,8 +47,8 @@
       "series": "sequence",
       "x": 5,
       "cases": 10000,
-      "ms": 159.40000000596046,
-      "casesPerSecond": 62735.257212208715,
+      "ms": 119.09999990463257,
+      "casesPerSecond": 83963.05632247978,
       "sameAsNode": true
     },
     {
@@ -56,8 +56,8 @@
       "series": "sequence",
       "x": 10,
       "cases": 10000,
-      "ms": 272.5,
-      "casesPerSecond": 36697.247706422015,
+      "ms": 197.89999997615814,
+      "casesPerSecond": 50530.57100153988,
       "sameAsNode": true
     },
     {
@@ -65,8 +65,8 @@
       "series": "sequence",
       "x": 20,
       "cases": 10000,
-      "ms": 540.5999999940395,
-      "casesPerSecond": 18497.965224029333,
+      "ms": 422.5,
+      "casesPerSecond": 23668.63905325444,
       "sameAsNode": true
     },
     {
@@ -74,8 +74,8 @@
       "series": "sequence",
       "x": 50,
       "cases": 10000,
-      "ms": 1452.4000000059605,
-      "casesPerSecond": 6885.155604488406,
+      "ms": 1122.2999999523163,
+      "casesPerSecond": 8910.27354577642,
       "sameAsNode": true
     },
     {
@@ -83,8 +83,8 @@
       "series": "sequence",
       "x": 100,
       "cases": 10000,
-      "ms": 3579.800000011921,
-      "casesPerSecond": 2793.4521481553998,
+      "ms": 2857.1999999284744,
+      "casesPerSecond": 3499.930001487587,
       "sameAsNode": true
     },
     {
@@ -92,8 +92,8 @@
       "series": "sequence",
       "x": 200,
       "cases": 10000,
-      "ms": 10038.800000011921,
-      "casesPerSecond": 996.1349962135041,
+      "ms": 7108.799999952316,
+      "casesPerSecond": 1406.7071798428817,
       "sameAsNode": true
     },
     {
@@ -101,8 +101,8 @@
       "series": "parallel",
       "x": 2,
       "cases": 10000,
-      "ms": 89.69999998807907,
-      "casesPerSecond": 111482.72019318816,
+      "ms": 62,
+      "casesPerSecond": 161290.32258064515,
       "sameAsNode": true
     },
     {
@@ -110,8 +110,8 @@
       "series": "parallel",
       "x": 5,
       "cases": 10000,
-      "ms": 163.2999999821186,
-      "casesPerSecond": 61236.98714693817,
+      "ms": 122.09999990463257,
+      "casesPerSecond": 81900.08196405078,
       "sameAsNode": true
     },
     {
@@ -119,8 +119,8 @@
       "series": "parallel",
       "x": 10,
       "cases": 10000,
-      "ms": 313.30000001192093,
-      "casesPerSecond": 31918.28917848549,
+      "ms": 233.60000002384186,
+      "casesPerSecond": 42808.21917371307,
       "sameAsNode": true
     },
     {
@@ -128,8 +128,8 @@
       "series": "parallel",
       "x": 20,
       "cases": 10000,
-      "ms": 665.5,
-      "casesPerSecond": 15026.296018031555,
+      "ms": 490.7999999523163,
+      "casesPerSecond": 20374.898127488897,
       "sameAsNode": true
     },
     {
@@ -137,8 +137,8 @@
       "series": "parallel",
       "x": 50,
       "cases": 10000,
-      "ms": 2010.2999999821186,
-      "casesPerSecond": 4974.381933089066,
+      "ms": 1426.3000000715256,
+      "casesPerSecond": 7011.147724530971,
       "sameAsNode": true
     },
     {
@@ -146,8 +146,8 @@
       "series": "cases",
       "x": 1000,
       "cases": 1000,
-      "ms": 13,
-      "casesPerSecond": 76923.07692307692,
+      "ms": 7,
+      "casesPerSecond": 142857.14285714287,
       "sameAsNode": true
     },
     {
@@ -155,8 +155,8 @@
       "series": "cases",
       "x": 10000,
       "cases": 10000,
-      "ms": 94,
-      "casesPerSecond": 106382.97872340426,
+      "ms": 67,
+      "casesPerSecond": 149253.73134328358,
       "sameAsNode": true
     },
     {
@@ -164,8 +164,8 @@
       "series": "cases",
       "x": 100000,
       "cases": 100000,
-      "ms": 1073,
-      "casesPerSecond": 93196.64492078286,
+      "ms": 784,
+      "casesPerSecond": 127551.02040816327,
       "sameAsNode": true
     },
     {
@@ -173,8 +173,8 @@
       "series": "cases",
       "x": 1000000,
       "cases": 1000000,
-      "ms": 9806,
-      "casesPerSecond": 76483.88741586784,
+      "ms": 9757,
+      "casesPerSecond": 102490.5196269345,
       "sameAsNode": true
     },
     {
@@ -182,8 +182,8 @@
       "series": "sequence",
       "x": 5,
       "cases": 10000,
-      "ms": 229,
-      "casesPerSecond": 43668.12227074236,
+      "ms": 186,
+      "casesPerSecond": 53763.44086021505,
       "sameAsNode": true
     },
     {
@@ -191,8 +191,8 @@
       "series": "sequence",
       "x": 10,
       "cases": 10000,
-      "ms": 415,
-      "casesPerSecond": 24096.385542168675,
+      "ms": 326,
+      "casesPerSecond": 30674.84662576687,
       "sameAsNode": true
     },
     {
@@ -200,8 +200,8 @@
       "series": "sequence",
       "x": 20,
       "cases": 10000,
-      "ms": 894,
-      "casesPerSecond": 11185.682326621923,
+      "ms": 648,
+      "casesPerSecond": 15432.098765432098,
       "sameAsNode": true
     },
     {
@@ -209,8 +209,8 @@
       "series": "sequence",
       "x": 50,
       "cases": 10000,
-      "ms": 2285,
-      "casesPerSecond": 4376.36761487965,
+      "ms": 1867,
+      "casesPerSecond": 5356.186395286556,
       "sameAsNode": true
     },
     {
@@ -218,8 +218,8 @@
       "series": "sequence",
       "x": 100,
       "cases": 10000,
-      "ms": 6617,
-      "casesPerSecond": 1511.258878645912,
+      "ms": 4153,
+      "casesPerSecond": 2407.8979051288225,
       "sameAsNode": true
     },
     {
@@ -227,8 +227,8 @@
       "series": "sequence",
       "x": 200,
       "cases": 10000,
-      "ms": 17884,
-      "casesPerSecond": 559.1590248266607,
+      "ms": 11489,
+      "casesPerSecond": 870.3977717817043,
       "sameAsNode": true
     },
     {
@@ -236,8 +236,8 @@
       "series": "parallel",
       "x": 2,
       "cases": 10000,
-      "ms": 152,
-      "casesPerSecond": 65789.47368421052,
+      "ms": 119,
+      "casesPerSecond": 84033.61344537816,
       "sameAsNode": true
     },
     {
@@ -245,8 +245,8 @@
       "series": "parallel",
       "x": 5,
       "cases": 10000,
-      "ms": 262,
-      "casesPerSecond": 38167.93893129771,
+      "ms": 215,
+      "casesPerSecond": 46511.62790697674,
       "sameAsNode": true
     },
     {
@@ -254,8 +254,8 @@
       "series": "parallel",
       "x": 10,
       "cases": 10000,
-      "ms": 515,
-      "casesPerSecond": 19417.47572815534,
+      "ms": 416,
+      "casesPerSecond": 24038.46153846154,
       "sameAsNode": true
     },
     {
@@ -263,8 +263,8 @@
       "series": "parallel",
       "x": 20,
       "cases": 10000,
-      "ms": 1125,
-      "casesPerSecond": 8888.888888888889,
+      "ms": 880,
+      "casesPerSecond": 11363.636363636364,
       "sameAsNode": true
     },
     {
@@ -272,8 +272,8 @@
       "series": "parallel",
       "x": 50,
       "cases": 10000,
-      "ms": 3464,
-      "casesPerSecond": 2886.8360277136258,
+      "ms": 2852,
+      "casesPerSecond": 3506.311360448808,
       "sameAsNode": true
     }
   ]

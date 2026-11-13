@@ -8,7 +8,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, copyFileSync } from
 import { homedir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { sequence, branches, loop } from '../experiments/lib/bpmn.mjs'
+import { sequence, branches, loop, model } from '../experiments/lib/bpmn.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const MODELS = join(ROOT, 'models')
@@ -30,6 +30,29 @@ const generated = {
   'exclusive-choice': branches('xor'), // V2, V4
   'parallel-split': branches('and'), // V2, V4
   'rework-loop': loop(), // V1 Jackson feedback, V2, V4
+  composite: model(
+    'composite',
+    [
+      { id: 'start', type: 'start' },
+      { id: 'pre', type: 'task' },
+      { id: 'split', type: 'xor' },
+      { id: 'par', type: 'and' },
+      { id: 'a1', type: 'task' },
+      { id: 'a2', type: 'task' },
+      { id: 'joinA', type: 'and' },
+      { id: 'b', type: 'task' },
+      { id: 'merge', type: 'xor' },
+      { id: 'work', type: 'task' },
+      { id: 'check', type: 'xor' },
+      { id: 'end', type: 'end' },
+    ],
+    [
+      ['start', 'pre'], ['pre', 'split'], ['split', 'par'], ['split', 'b'],
+      ['par', 'a1'], ['par', 'a2'], ['a1', 'joinA'], ['a2', 'joinA'],
+      ['joinA', 'merge'], ['b', 'merge'], ['merge', 'work'], ['work', 'check'],
+      ['check', 'merge'], ['check', 'end'],
+    ],
+  ), // V4: choice + parallel + rework
 }
 for (const [name, m] of Object.entries(generated)) writeFileSync(join(MODELS, name + '.bpmn'), m.xml)
 

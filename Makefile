@@ -3,7 +3,7 @@
 #   make paper      PDF from the results in results/
 
 SIMULATOR_REPO ?= https://github.com/BFH-Process-Digitalization/process-simulator.git
-SIMULATOR_REF  ?= v1.0.0
+SIMULATOR_REF  ?= v1.0.1
 SIM            := tools/process-simulator
 CLI            := $(SIM)/dist-cli/procsim.mjs
 PY             ?= .venv/bin/python

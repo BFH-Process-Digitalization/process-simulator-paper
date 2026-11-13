@@ -66,7 +66,7 @@ export function loop() {
 // ---------------------------------------------------------------------------
 // Scenarios (the simulator's JSON format)
 
-export const ALWAYS = { id: 'always', name: '24/7', periods: [{ fromDay: 0, toDay: 6, from: '00:00', to: '24:00' }] }
+export const ALWAYS = { id: 'always', name: '24/7', rules: [{ fromDay: 0, toDay: 6, from: '00:00', to: '24:00' }] }
 
 export const dist = {
   exp: (mean) => ({ type: 'exponential', mean, unit: 'seconds' }),
@@ -91,8 +91,8 @@ export function scenario({ id = 'baseline', name = id, cases, arrival, warmup = 
     arrival,
     startDate: '2026-01-05T00:00:00',
     currency: 'CHF',
-    resources: Object.entries(resources).map(([rid, count]) => ({ id: rid, name: rid, count, hourlyRate: 0, calendarId: 'always' })),
-    calendars: [ALWAYS],
+    resources: Object.entries(resources).map(([rid, count]) => ({ id: rid, name: rid, count, costPerHour: 0, timetableId: 'always' })),
+    timetables: [ALWAYS],
     elements,
     flows,
     trim: 0,

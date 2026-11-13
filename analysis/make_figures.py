@@ -3,17 +3,21 @@ import json
 import math
 from pathlib import Path
 
-import matplotlib
+try:
+    import matplotlib
 
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FixedLocator, FuncFormatter, LogLocator, NullFormatter, NullLocator
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import FixedLocator, FuncFormatter, LogLocator, NullFormatter, NullLocator
+except ImportError:
+    plt = None  # tables and macros are still generated; figures need matplotlib
 
 ROOT = Path(__file__).resolve().parents[1]
 RES = ROOT / "results"
 OUT = ROOT / "paper/generated"
 OUT.mkdir(parents=True, exist_ok=True)
-plt.rcParams.update({"font.size": 8, "font.family": "serif", "figure.dpi": 200})
+if plt:
+    plt.rcParams.update({"font.size": 8, "font.family": "serif", "figure.dpi": 200})
 macros = []
 
 
@@ -71,6 +75,8 @@ def v2(r):
     macro("VtwoCases", f"{r['cases']:,}".replace(",", "\\,"))
     macro("VtwoBound", pct(worst, 1))
     macro("VtwoZero", f"{zero} of {len(r['rows'])}")
+    equiv = sum(x["rel_lo"] > -0.05 and x["rel_hi"] < 0.05 for x in r["rows"])
+    macro("VtwoEquiv", f"{equiv} of {len(r['rows'])}")
 
 
 def v4(r):
@@ -87,11 +93,24 @@ def v4(r):
     macro("VfourReps", r["reps"])
 
 
+def wilson(b, d=1):
+    return f"{100 * b['p']:.{d}f} [{100 * b['lo']:.{d}f}, {100 * b['hi']:.{d}f}]"
+
+
 def v5(r):
-    lines = [r"\begin{tabular}{lrrrr}", r"\toprule", r"Problem & \multicolumn{3}{c}{One run per scenario} & 10 paired runs \\", r" & one stream, same seed & per-source streams & independent seeds & mean \\", r"\midrule"]
+    budgets = [str(k) for k in r["budgets"] if str(k) != "1"]
+    lines = [
+        r"\begin{tabular}{lrrrrrrrrr}",
+        r"\toprule",
+        r"Problem & Best gap & \multicolumn{3}{c}{One run per option} & \multicolumn{%d}{c}{Paired replications per option} \\" % len(budgets),
+        r" & & one stream & per-source & indep.\ seeds & " + " & ".join(budgets) + r" \\",
+        r"\midrule",
+    ]
     for p in r["problems"]:
         m = p["methods"]
-        lines.append(f"{p['name']} & {pct(m['singleStreamSameSeed'])} & {pct(m['keyedSameSeed'])} & {pct(m['independentSeeds'])} & {pct(m['replicatedMean'])} \\\\")
+        cells = [p["name"], pct(p["gapPct"]), wilson(m["singleStreamSameSeed"]), wilson(m["keyedSameSeed"]), wilson(m["independentSeeds"])]
+        cells += [wilson(p["budgets"][k]) for k in budgets]
+        lines.append(" & ".join(cells) + r" \\")
     lines += [r"\bottomrule", r"\end{tabular}"]
     (OUT / "v5_table.tex").write_text("\n".join(lines) + "\n")
     lines = [r"\begin{tabular}{llrrrr}", r"\toprule", r"Problem & Option & True difference (s) & \multicolumn{3}{c}{Variance of the difference} \\", r" & & & independent & one stream & per source \\", r"\midrule"]
@@ -104,12 +123,15 @@ def v5(r):
     lines += [r"\bottomrule", r"\end{tabular}"]
     (OUT / "v5_variance.tex").write_text("\n".join(lines) + "\n")
     office = r["problems"][1]
-    macro("VfiveN", f"{r['n']:,}".replace(",", "\\,"))
-    macro("VfiveOfficeSingle", pct(1 - office["methods"]["singleStreamSameSeed"]))
-    macro("VfiveOfficeKeyed", pct(1 - office["methods"]["keyedSameSeed"]))
-    macro("VfiveOfficeIndep", pct(1 - office["methods"]["independentSeeds"]))
-    macro("VfiveOfficeRep", pct(1 - office["methods"]["replicatedMean"]))
+    macro("VfiveN", f"{r['trials']:,}".replace(",", "\\,"))
+    macro("VfiveRef", f"{r['ref']:,}".replace(",", "\\,"))
+    macro("VfiveOfficeSingle", pct(1 - office["methods"]["singleStreamSameSeed"]["p"]))
+    macro("VfiveOfficeKeyed", pct(1 - office["methods"]["keyedSameSeed"]["p"]))
+    macro("VfiveOfficeIndep", pct(1 - office["methods"]["independentSeeds"]["p"]))
+    macro("VfiveOfficeIndepCI", wilson({k: v for k, v in office["methods"]["independentSeeds"].items()}))
+    macro("VfiveOfficeRep", pct(1 - office["budgets"]["10"]["p"]))
     macro("VfiveRatio", f"{best_ratio:.0f}")
+    macro("VfiveCoffeeIndep", pct(1 - r["problems"][0]["methods"]["independentSeeds"]["p"]))
     pv = [p["pairedVsBaseline"] for p in r["problems"]]
     macro("VfiveWrong", pct(max(x["wrong"] for x in pv)))
     macro("VfiveNs", pct(max(x["ns"] for x in pv)))
@@ -128,6 +150,9 @@ def v6(r):
     b = load("v6_browser")
     if b:
         rows += b["rows"]
+    if not plt:
+        _v6_macros(r, b)
+        return
     fig, axes = plt.subplots(1, 3, figsize=(7, 2.4))
     for ax, series, xl in zip(axes, ["cases", "sequence", "parallel"], ["cases", "activities in sequence", "parallel branches"]):
         for name, colour, style in RUNTIMES:
@@ -149,6 +174,10 @@ def v6(r):
         axes[0].legend(frameon=False, loc="upper left")
     fig.tight_layout(w_pad=1.5)
     fig.savefig(OUT / "v6_performance.pdf")
+    _v6_macros(r, b)
+
+
+def _v6_macros(r, b):
     big = max((x for x in r["rows"] if x["series"] == "cases"), key=lambda x: x["x"])
     macro("VsixMillion", f"{big['ms'] / 1000:.1f}")
     macro("VsixRate", f"{round(big['casesPerSecond'], -3):,.0f}".replace(",", "\\,"))

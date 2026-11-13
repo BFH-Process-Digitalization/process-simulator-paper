@@ -10,13 +10,13 @@ export const CLI = process.env.PROCSIM ?? join(ROOT, 'tools', 'process-simulator
 const WORK = join(ROOT, 'data', 'models')
 
 /** Writes model and scenario under data/models/<name>, runs it and returns one record per replication. */
-export function run(name, m, sc, { reps = 1, rng = 'keyed', activities = true } = {}) {
+export function run(name, m, sc, { reps = 1, rng = 'keyed', activities = true, extra = [] } = {}) {
   mkdirSync(WORK, { recursive: true })
   const bpmn = join(WORK, `${name}.bpmn`)
   const json = join(WORK, `${name}.${sc.id}.json`)
   writeFileSync(bpmn, m.xml)
   writeFileSync(json, JSON.stringify(sc, null, 2))
-  const args = [CLI, 'run', bpmn, '--params', json, '--reps', String(reps), '--rng', rng]
+  const args = [CLI, 'run', bpmn, '--params', json, '--reps', String(reps), '--rng', rng, ...extra]
   if (activities) args.push('--activities')
   const out = execFileSync(process.execPath, args, { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 30 })
   return out.trim().split('\n').map((l) => JSON.parse(l))

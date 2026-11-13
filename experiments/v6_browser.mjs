@@ -36,7 +36,11 @@ const url = `http://127.0.0.1:${server.address().port}/`
 
 const cases = v6Cases()
 const reference = new Map()
-for (const c of cases) reference.set(`${c.series}_${c.x}`, run(`v6_${c.series}_${c.x}`, c.m, c.sc, { reps: 1, activities: false })[0].metrics)
+for (const c of cases)
+  reference.set(
+    `${c.series}_${c.x}`,
+    run(`v6_${c.series}_${c.x}`, c.m, c.sc, { reps: 1, activities: false, extra: ['--max-events', String(10 * c.sc.cases * (c.m.tasks.length + 2))] })[0].metrics,
+  )
 
 const rows = []
 const browsers = {}
@@ -48,8 +52,17 @@ for (const [name, type] of [['Chromium', chromium], ['Firefox', firefox]]) {
   await page.goto(url)
   for (const { series, x, m, sc } of cases) {
     const recs = await page.evaluate((job) => window.bench(job), { xml: m.xml, scenario: sc, reps: REPS })
-    const same = JSON.stringify(recs[0].metrics) === JSON.stringify(reference.get(`${series}_${x}`))
-    if (!same) mismatches++
+    const ref = reference.get(`${series}_${x}`)
+    const diff = Object.keys(recs[0].metrics).filter((k) => {
+      const a = recs[0].metrics[k]
+      const b = ref[k]
+      return b === undefined || Math.abs(a - b) > 1e-9 * Math.max(1, Math.abs(b))
+    })
+    const same = diff.length === 0
+    if (!same) {
+      mismatches++
+      console.log('    differs:', diff.map((k) => `${k} ${recs[0].metrics[k]} vs ${ref[k]}`).join('; '))
+    }
     const ms = median(recs.map((r) => r.wallMs))
     rows.push({ runtime: name, series, x, cases: sc.cases, ms, casesPerSecond: (1000 * recs[0].casesStarted) / ms, sameAsNode: same })
     console.log(name, series, x, `${ms.toFixed(1)} ms`, `${Math.round((1000 * recs[0].casesStarted) / ms)} cases/s`, same ? 'same results' : 'DIFFERENT results')

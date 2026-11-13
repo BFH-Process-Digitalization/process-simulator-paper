@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="defs_composite" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="composite" isExecutable="false">
+    <bpmn:startEvent id="start" name="start">
+      <bpmn:outgoing>f1_start_pre</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="pre" name="pre">
+      <bpmn:incoming>f1_start_pre</bpmn:incoming>
+      <bpmn:outgoing>f2_pre_split</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="split" name="split">
+      <bpmn:incoming>f2_pre_split</bpmn:incoming>
+      <bpmn:outgoing>f3_split_par</bpmn:outgoing>
+      <bpmn:outgoing>f4_split_b</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="par" name="par">
+      <bpmn:incoming>f3_split_par</bpmn:incoming>
+      <bpmn:outgoing>f5_par_a1</bpmn:outgoing>
+      <bpmn:outgoing>f6_par_a2</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="a1" name="a1">
+      <bpmn:incoming>f5_par_a1</bpmn:incoming>
+      <bpmn:outgoing>f7_a1_joinA</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="a2" name="a2">
+      <bpmn:incoming>f6_par_a2</bpmn:incoming>
+      <bpmn:outgoing>f8_a2_joinA</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="joinA" name="joinA">
+      <bpmn:incoming>f7_a1_joinA</bpmn:incoming>
+      <bpmn:incoming>f8_a2_joinA</bpmn:incoming>
+      <bpmn:outgoing>f9_joinA_merge</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="b" name="b">
+      <bpmn:incoming>f4_split_b</bpmn:incoming>
+      <bpmn:outgoing>f10_b_merge</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="merge" name="merge">
+      <bpmn:incoming>f9_joinA_merge</bpmn:incoming>
+      <bpmn:incoming>f10_b_merge</bpmn:incoming>
+      <bpmn:incoming>f13_check_merge</bpmn:incoming>
+      <bpmn:outgoing>f11_merge_work</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="work" name="work">
+      <bpmn:incoming>f11_merge_work</bpmn:incoming>
+      <bpmn:outgoing>f12_work_check</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="check" name="check">
+      <bpmn:incoming>f12_work_check</bpmn:incoming>
+      <bpmn:outgoing>f13_check_merge</bpmn:outgoing>
+      <bpmn:outgoing>f14_check_end</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="end" name="end">
+      <bpmn:incoming>f14_check_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1_start_pre" sourceRef="start" targetRef="pre" />
+    <bpmn:sequenceFlow id="f2_pre_split" sourceRef="pre" targetRef="split" />
+    <bpmn:sequenceFlow id="f3_split_par" sourceRef="split" targetRef="par" />
+    <bpmn:sequenceFlow id="f4_split_b" sourceRef="split" targetRef="b" />
+    <bpmn:sequenceFlow id="f5_par_a1" sourceRef="par" targetRef="a1" />
+    <bpmn:sequenceFlow id="f6_par_a2" sourceRef="par" targetRef="a2" />
+    <bpmn:sequenceFlow id="f7_a1_joinA" sourceRef="a1" targetRef="joinA" />
+    <bpmn:sequenceFlow id="f8_a2_joinA" sourceRef="a2" targetRef="joinA" />
+    <bpmn:sequenceFlow id="f9_joinA_merge" sourceRef="joinA" targetRef="merge" />
+    <bpmn:sequenceFlow id="f10_b_merge" sourceRef="b" targetRef="merge" />
+    <bpmn:sequenceFlow id="f11_merge_work" sourceRef="merge" targetRef="work" />
+    <bpmn:sequenceFlow id="f12_work_check" sourceRef="work" targetRef="check" />
+    <bpmn:sequenceFlow id="f13_check_merge" sourceRef="check" targetRef="merge" />
+    <bpmn:sequenceFlow id="f14_check_end" sourceRef="check" targetRef="end" />
+  </bpmn:process>
+</bpmn:definitions>

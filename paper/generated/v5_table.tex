@@ -1,9 +1,9 @@
-\begin{tabular}{lrrrr}
+\begin{tabular}{lrrrrrrrrr}
 \toprule
-Problem & \multicolumn{3}{c}{One run per scenario} & 10 paired runs \\
- & one stream, same seed & per-source streams & independent seeds & mean \\
+Problem & Best gap & \multicolumn{3}{c}{One run per option} & \multicolumn{5}{c}{Paired replications per option} \\
+ & & one stream & per-source & indep.\ seeds & 2 & 5 & 10 & 25 & 50 \\
 \midrule
-Coffee shop & 99.7\,\% & 100.0\,\% & 80.7\,\% & 100.0\,\% \\
-Office process & 73.7\,\% & 80.2\,\% & 54.9\,\% & 99.5\,\% \\
+Coffee shop & 21.8\,\% & 99.4 [98.7, 99.7] & 99.9 [99.4, 100.0] & 79.0 [76.4, 81.4] & 100.0 [99.2, 100.0] & 100.0 [98.1, 100.0] & 100.0 [96.3, 100.0] & 100.0 [91.2, 100.0] & 100.0 [83.9, 100.0] \\
+Office process & 9.8\,\% & 76.1 [73.4, 78.6] & 82.3 [79.8, 84.5] & 56.2 [53.1, 59.2] & 89.8 [86.8, 92.2] & 99.5 [97.2, 99.9] & 100.0 [96.3, 100.0] & 100.0 [91.2, 100.0] & 100.0 [83.9, 100.0] \\
 \bottomrule
 \end{tabular}

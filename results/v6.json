@@ -1,128 +1,158 @@
 {
   "reps": 5,
-  "node": "v20.20.2",
-  "cpu": "Intel(R) Xeon(R) Processor",
+  "node": "v20.18.3",
+  "cpu": "Apple M3",
   "threads": 8,
   "rows": [
     {
       "series": "cases",
       "x": 1000,
       "cases": 1000,
+      "started": 1000,
+      "capped": false,
       "tasks": 1,
-      "ms": 11.44,
-      "casesPerSecond": 87412.58741258741
+      "ms": 10.86,
+      "casesPerSecond": 92081.03130755066
     },
     {
       "series": "cases",
       "x": 10000,
       "cases": 10000,
+      "started": 10000,
+      "capped": false,
       "tasks": 1,
-      "ms": 67.78,
-      "casesPerSecond": 147536.14635585717
+      "ms": 54.23,
+      "casesPerSecond": 184399.77872026555
     },
     {
       "series": "cases",
       "x": 100000,
       "cases": 100000,
+      "started": 100000,
+      "capped": false,
       "tasks": 1,
-      "ms": 948.66,
-      "casesPerSecond": 105411.84407480025
+      "ms": 1172.91,
+      "casesPerSecond": 85258.03343820071
     },
     {
       "series": "cases",
       "x": 1000000,
       "cases": 1000000,
+      "started": 1000000,
+      "capped": false,
       "tasks": 1,
-      "ms": 10104.4,
-      "casesPerSecond": 74225.18902656269
+      "ms": 19787.05,
+      "casesPerSecond": 50538.104467315745
     },
     {
       "series": "sequence",
       "x": 5,
       "cases": 10000,
+      "started": 10000,
+      "capped": false,
       "tasks": 5,
-      "ms": 175.5,
-      "casesPerSecond": 56980.05698005698
+      "ms": 146.06,
+      "casesPerSecond": 68465.01437765302
     },
     {
       "series": "sequence",
       "x": 10,
       "cases": 10000,
+      "started": 10000,
+      "capped": false,
       "tasks": 10,
-      "ms": 316.49,
-      "casesPerSecond": 31596.57493127745
+      "ms": 253.03,
+      "casesPerSecond": 39521.005414377745
     },
     {
       "series": "sequence",
       "x": 20,
       "cases": 10000,
+      "started": 10000,
+      "capped": false,
       "tasks": 20,
-      "ms": 616.37,
-      "casesPerSecond": 16224.021285915927
+      "ms": 494.34,
+      "casesPerSecond": 20228.992191609013
     },
     {
       "series": "sequence",
       "x": 50,
       "cases": 10000,
+      "started": 10000,
+      "capped": false,
       "tasks": 50,
-      "ms": 1751.15,
-      "casesPerSecond": 5710.533078262855
+      "ms": 1404.26,
+      "casesPerSecond": 7121.188383917508
     },
     {
       "series": "sequence",
       "x": 100,
       "cases": 10000,
+      "started": 10000,
+      "capped": false,
       "tasks": 100,
-      "ms": 4534.82,
-      "casesPerSecond": 2205.1591904419583
+      "ms": 3526.59,
+      "casesPerSecond": 2835.600395849815
     },
     {
       "series": "sequence",
       "x": 200,
       "cases": 10000,
+      "started": 10000,
+      "capped": false,
       "tasks": 200,
-      "ms": 12952.23,
-      "casesPerSecond": 772.0678215257142
+      "ms": 11367.01,
+      "casesPerSecond": 879.7388231381867
     },
     {
       "series": "parallel",
       "x": 2,
       "cases": 10000,
+      "started": 10000,
+      "capped": false,
       "tasks": 2,
-      "ms": 96.57,
-      "casesPerSecond": 103551.82768975873
+      "ms": 98.47,
+      "casesPerSecond": 101553.77272265665
     },
     {
       "series": "parallel",
       "x": 5,
       "cases": 10000,
+      "started": 10000,
+      "capped": false,
       "tasks": 5,
-      "ms": 190.81,
-      "casesPerSecond": 52408.1547088727
+      "ms": 183.82,
+      "casesPerSecond": 54401.044500054406
     },
     {
       "series": "parallel",
       "x": 10,
       "cases": 10000,
+      "started": 10000,
+      "capped": false,
       "tasks": 10,
-      "ms": 362.5,
-      "casesPerSecond": 27586.206896551725
+      "ms": 324.05,
+      "casesPerSecond": 30859.435272334515
     },
     {
       "series": "parallel",
       "x": 20,
       "cases": 10000,
+      "started": 10000,
+      "capped": false,
       "tasks": 20,
-      "ms": 747.16,
-      "casesPerSecond": 13384.014133518926
+      "ms": 696.12,
+      "casesPerSecond": 14365.339309314486
     },
     {
       "series": "parallel",
       "x": 50,
       "cases": 10000,
+      "started": 10000,
+      "capped": false,
       "tasks": 50,
-      "ms": 2170.97,
-      "casesPerSecond": 4606.235922191463
+      "ms": 2096.52,
+      "casesPerSecond": 4769.809016846965
     }
   ]
 }

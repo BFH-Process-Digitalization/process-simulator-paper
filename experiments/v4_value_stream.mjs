@@ -1,9 +1,9 @@
-// V4: value stream figures on sequence, exclusive choice, parallel split and rework loop.
-// Expected values are computed by hand from the model; "classic" is a linear value stream map
-// that puts every step in one line and adds up the step times.
+// V4: value stream figures on sequence, exclusive choice, parallel split, rework loop and
+// a composite model. Expected values are computed by hand from the model; "classic" is a
+// linear value stream map that puts every step in one line and adds up the step times.
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
-import { sequence, branches, loop, scenario, dist } from './lib/bpmn.mjs'
+import { sequence, branches, loop, model, scenario, dist } from './lib/bpmn.mjs'
 import { run, save, reset, ROOT } from './lib/run.mjs'
 import { ci, mmcWait } from './lib/stats.mjs'
 
@@ -15,6 +15,31 @@ const xor = branches('xor')
 const and = branches('and')
 const fb = loop()
 const p = 0.5
+
+// choice between a parallel pair and a single task, then a rework loop; fixed durations
+const composite = model(
+  'composite',
+  [
+    { id: 'start', type: 'start' },
+    { id: 'pre', type: 'task' },
+    { id: 'split', type: 'xor' },
+    { id: 'par', type: 'and' },
+    { id: 'a1', type: 'task' },
+    { id: 'a2', type: 'task' },
+    { id: 'joinA', type: 'and' },
+    { id: 'b', type: 'task' },
+    { id: 'merge', type: 'xor' },
+    { id: 'work', type: 'task' },
+    { id: 'check', type: 'xor' },
+    { id: 'end', type: 'end' },
+  ],
+  [
+    ['start', 'pre'], ['pre', 'split'], ['split', 'par'], ['split', 'b'],
+    ['par', 'a1'], ['par', 'a2'], ['a1', 'joinA'], ['a2', 'joinA'],
+    ['joinA', 'merge'], ['b', 'merge'], ['merge', 'work'], ['work', 'check'],
+    ['check', 'merge'], ['check', 'end'],
+  ],
+)
 
 const cases = [
   {
@@ -42,6 +67,45 @@ const cases = [
     sc: scenario({ cases: CASES, arrival, tasks: { a: { duration: fixed(50), value: 'va' }, b: { duration: fixed(30), value: 'nva' } } }),
     exact: { lead: 50, va: 50, bva: 0, nva: 0, rework: 0, wait: 0 },
     classic: { lead: 80, va: 50 },
+  },
+  {
+    // VA and NVA work of equal length run concurrently: the whole interval counts as VA
+    // under the precedence rule, so PCE is 1 although half the work content is NVA.
+    name: 'Parallel VA + NVA, equal duration',
+    m: and,
+    sc: scenario({ cases: CASES, arrival, tasks: { a: { duration: fixed(50), value: 'va' }, b: { duration: fixed(50), value: 'nva' } } }),
+    exact: { lead: 50, va: 50, bva: 0, nva: 0, rework: 0, wait: 0 },
+    classic: { lead: 100, va: 50 },
+  },
+  {
+    name: 'Choice + parallel + rework (composite)',
+    m: composite,
+    sc: scenario({
+      cases: CASES,
+      arrival,
+      tasks: {
+        pre: { duration: fixed(10), value: 'va' },
+        a1: { duration: fixed(30), value: 'va' },
+        a2: { duration: fixed(20), value: 'nva' },
+        b: { duration: fixed(25), value: 'nva' },
+        work: { duration: fixed(15), value: 'va' },
+      },
+      flows: {
+        [composite.flowId('split', 'par')]: 0.4,
+        [composite.flowId('split', 'b')]: 0.6,
+        [composite.flowId('check', 'merge')]: 0.3,
+        [composite.flowId('check', 'end')]: 0.7,
+      },
+    }),
+    exact: {
+      lead: 10 + 0.4 * 30 + 0.6 * 25 + 15 / 0.7,
+      va: 10 + 0.4 * 30 + 15,
+      bva: 0,
+      nva: 0.6 * 25,
+      rework: 15 * (0.3 / 0.7),
+      wait: 0,
+    },
+    classic: { lead: 10 + 30 + 20 + 25 + 15, va: 10 + 30 + 15 },
   },
   {
     name: `Rework loop (p = ${p})`,

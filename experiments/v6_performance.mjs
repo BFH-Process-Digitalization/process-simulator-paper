@@ -10,11 +10,13 @@ const median = (xs) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)]
 const rows = []
 
 for (const { series, x, m, sc } of v6Cases()) {
-  const recs = run(`v6_${series}_${x}`, m, sc, { reps: REPS, activities: false })
+  // the engine stops after a safety cap of events; allow enough for every case to arrive and finish
+  const recs = run(`v6_${series}_${x}`, m, sc, { reps: REPS, activities: false, extra: ['--max-events', String(10 * sc.cases * (m.tasks.length + 2))] })
   const ms = median(recs.map((r) => r.wallMs))
   const events = recs[0].casesStarted
-  rows.push({ series, x, cases: sc.cases, tasks: m.tasks.length, ms, casesPerSecond: (1000 * events) / ms })
-  console.log(series, x, `${ms.toFixed(1)} ms`, `${Math.round((1000 * events) / ms)} cases/s`)
+  const capped = recs.some((r) => r.warnings?.length)
+  rows.push({ series, x, cases: sc.cases, started: events, capped, tasks: m.tasks.length, ms, casesPerSecond: (1000 * events) / ms })
+  console.log(series, x, `${ms.toFixed(1)} ms`, `${Math.round((1000 * events) / ms)} cases/s`, events === sc.cases ? '' : `only ${events} of ${sc.cases} cases ran`)
 }
 
 mkdirSync(join(ROOT, 'results'), { recursive: true })
