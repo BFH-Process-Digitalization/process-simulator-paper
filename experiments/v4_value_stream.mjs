@@ -48,6 +48,7 @@ const cases = [
     sc: scenario({ cases: CASES, arrival, tasks: { t1: { duration: fixed(10), value: 'va' }, t2: { duration: fixed(20), value: 'nva' }, t3: { duration: fixed(30), value: 'bva' } } }),
     exact: { lead: 60, va: 10, bva: 30, nva: 20, rework: 0, wait: 0 },
     classic: { lead: 60, va: 10 },
+    work: { va: 10, total: 60 },
   },
   {
     name: 'Exclusive choice (30/70)',
@@ -60,6 +61,7 @@ const cases = [
     }),
     exact: { lead: 0.3 * 100 + 0.7 * 40, va: 30, bva: 0, nva: 28, rework: 0, wait: 0 },
     classic: { lead: 140, va: 100 },
+    work: { va: 30, total: 58 },
   },
   {
     name: 'Parallel split',
@@ -67,6 +69,7 @@ const cases = [
     sc: scenario({ cases: CASES, arrival, tasks: { a: { duration: fixed(50), value: 'va' }, b: { duration: fixed(30), value: 'nva' } } }),
     exact: { lead: 50, va: 50, bva: 0, nva: 0, rework: 0, wait: 0 },
     classic: { lead: 80, va: 50 },
+    work: { va: 50, total: 80 },
   },
   {
     // VA and NVA work of equal length run concurrently: the whole interval counts as VA
@@ -76,6 +79,7 @@ const cases = [
     sc: scenario({ cases: CASES, arrival, tasks: { a: { duration: fixed(50), value: 'va' }, b: { duration: fixed(50), value: 'nva' } } }),
     exact: { lead: 50, va: 50, bva: 0, nva: 0, rework: 0, wait: 0 },
     classic: { lead: 100, va: 50 },
+    work: { va: 50, total: 100 },
   },
   {
     name: 'Choice + parallel + rework (composite)',
@@ -106,6 +110,7 @@ const cases = [
       wait: 0,
     },
     classic: { lead: 10 + 30 + 20 + 25 + 15, va: 10 + 30 + 15 },
+    work: { va: 10 + 0.4 * 30 + 15 / 0.7, total: 10 + 0.4 * 50 + 0.6 * 25 + 15 / 0.7 },
   },
   {
     name: `Rework loop (p = ${p})`,
@@ -118,6 +123,7 @@ const cases = [
     }),
     exact: { lead: 20 / (1 - p), va: 20, bva: 0, nva: 0, rework: (20 * p) / (1 - p), wait: 0 },
     classic: { lead: 20, va: 20 },
+    work: { va: 40, total: 40 },
   },
   {
     name: 'Sequence with queues (M/M/1 tandem)',
@@ -134,6 +140,7 @@ const cases = [
       return { lead: 40 + 48 + w, va: 40, bva: 0, nva: 48, rework: 0, wait: w }
     })(),
     classic: null,
+    work: { va: 40, total: 88 },
   },
 ]
 
@@ -151,6 +158,19 @@ for (const [i, c] of cases.entries()) {
     ...recs.map((r) => Math.abs(['va', 'bva', 'nva', 'rework', 'none', 'wait'].reduce((a, k) => a + r.metrics['flow.' + k], 0) - r.metrics.cycle) / r.metrics.cycle),
   )
   row.pce = { exact: c.exact.va / c.exact.lead, tool: ci(recs.map((r) => r.metrics.pce)), classic: c.classic ? c.classic.va / c.classic.lead : null }
+  // work-content share of VA effort over all executed work, repetitions counted under
+  // the value class of their activity
+  const shares = recs.map((r) => {
+    let va = 0
+    let total = 0
+    for (const a of r.activities) {
+      const w = a.count * a.processing
+      total += w
+      if (c.sc.elements[a.id]?.value === 'va') va += w
+    }
+    return total ? va / total : 0
+  })
+  row.work = { exact: c.work.va / c.work.total, tool: ci(shares) }
   rows.push(row)
   console.log(c.name, KEYS.map((k) => `${k} ${row.tool[k].mean.toFixed(2)}/${c.exact[k].toFixed(2)}`).join(' '), `PCE ${row.pce.tool.mean.toFixed(3)}/${row.pce.exact.toFixed(3)} classic ${row.pce.classic?.toFixed(3)}`, `partition err ${row.partitionError.toExponential(1)}`)
 }

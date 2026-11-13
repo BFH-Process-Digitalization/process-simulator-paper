@@ -80,12 +80,19 @@ def v2(r):
 
 
 def v4(r):
-    lines = [r"\begin{tabular}{lrrrrrr}", r"\toprule", r"Case & \multicolumn{2}{c}{Lead time} & \multicolumn{3}{c}{PCE} & Rework \\", r" & exact & tool & exact & tool & linear map & tool \\", r"\midrule"]
+    lines = [
+        r"\begin{tabular}{lrrrrrrrr}",
+        r"\toprule",
+        r"Case & \multicolumn{2}{c}{Lead time} & \multicolumn{3}{c}{PCE} & Rework & \multicolumn{2}{c}{VA work share} \\",
+        r" & exact & tool & exact & tool & linear map & tool & exact & tool \\",
+        r"\midrule",
+    ]
     for x in r["rows"]:
         c = x["classic"]
         lines.append(
             f"{x['case']} & {x['exact']['lead']:.1f} & {x['tool']['lead']['mean']:.1f} & {x['pce']['exact']:.3f} & {x['pce']['tool']['mean']:.3f} & "
-            f"{'--' if not c else f'{c['va'] / c['lead']:.3f}'} & {x['tool']['rework']['mean']:.1f} \\\\"
+            f"{'--' if not c else f'{c['va'] / c['lead']:.3f}'} & {x['tool']['rework']['mean']:.1f} & "
+            f"{x['work']['exact']:.3f} & {x['work']['tool']['mean']:.3f} \\\\"
         )
     lines += [r"\bottomrule", r"\end{tabular}"]
     (OUT / "v4_table.tex").write_text("\n".join(lines) + "\n")
@@ -130,6 +137,8 @@ def v5(r):
     macro("VfiveOfficeIndep", pct(1 - office["methods"]["independentSeeds"]["p"]))
     macro("VfiveOfficeIndepCI", wilson({k: v for k, v in office["methods"]["independentSeeds"].items()}))
     macro("VfiveOfficeRep", pct(1 - office["budgets"]["10"]["p"]))
+    macro("VfiveOfficeRepUpper", pct(1 - office["budgets"]["10"]["lo"]))
+    macro("VfiveOfficeRepTrials", f"{office['budgets']['10']['n']}")
     macro("VfiveRatio", f"{best_ratio:.0f}")
     macro("VfiveCoffeeIndep", pct(1 - r["problems"][0]["methods"]["independentSeeds"]["p"]))
     pv = [p["pairedVsBaseline"] for p in r["problems"]]
@@ -179,10 +188,15 @@ def v6(r):
 
 def _v6_macros(r, b):
     big = max((x for x in r["rows"] if x["series"] == "cases"), key=lambda x: x["x"])
+    small = next(x for x in r["rows"] if x["series"] == "cases" and x["x"] == 10000)
     macro("VsixMillion", f"{big['ms'] / 1000:.1f}")
     macro("VsixRate", f"{round(big['casesPerSecond'], -3):,.0f}".replace(",", "\\,"))
+    macro("VsixRateSmall", f"{round(small['casesPerSecond'], -3):,.0f}".replace(",", "\\,"))
     macro("VsixCpu", r["cpu"].replace("(R)", "").replace("(TM)", "").strip())
     macro("VsixNode", r["node"])
+    macro("VsixThreads", str(r["threads"]))
+    spreads = sorted((x["maxMs"] - x["minMs"]) / x["ms"] for x in r["rows"])
+    macro("VsixSpread", pct(spreads[len(spreads) // 2], 0))
     if b:
         macro("VsixReps", str(b["reps"]))
         macro("VsixChromium", b["browsers"]["Chromium"].split(".")[0])
