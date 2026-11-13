@@ -1,11 +1,13 @@
 """Turns results/*.json into the LaTeX tables, macros and figures used in the paper."""
 import json
+import math
 from pathlib import Path
 
 import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FixedLocator, FuncFormatter, LogLocator, NullFormatter, NullLocator
 
 ROOT = Path(__file__).resolve().parents[1]
 RES = ROOT / "results"
@@ -113,24 +115,57 @@ def v5(r):
     macro("VfiveNs", pct(max(x["ns"] for x in pv)))
 
 
+RUNTIMES = [("Node.js", "#1f4e79", "o-"), ("Chromium", "#c55a11", "s--"), ("Firefox", "#548235", "^:")]
+V6_TICKS = {"cases": [1e3, 1e4, 1e5, 1e6], "sequence": [5, 10, 20, 50, 100, 200], "parallel": [2, 5, 10, 20, 50]}
+
+
+def tick(v):
+    return f"$10^{{{round(math.log10(v))}}}$" if v >= 1000 else f"{v:g}"
+
+
 def v6(r):
-    fig, axes = plt.subplots(1, 3, figsize=(7, 2.1))
+    rows = [dict(x, runtime="Node.js") for x in r["rows"]]
+    b = load("v6_browser")
+    if b:
+        rows += b["rows"]
+    fig, axes = plt.subplots(1, 3, figsize=(7, 2.4))
     for ax, series, xl in zip(axes, ["cases", "sequence", "parallel"], ["cases", "activities in sequence", "parallel branches"]):
-        rows = [x for x in r["rows"] if x["series"] == series]
-        ax.plot([x["x"] for x in rows], [x["ms"] / 1000 for x in rows], "o-", color="#1f4e79", ms=3)
+        for name, colour, style in RUNTIMES:
+            pts = [x for x in rows if x["series"] == series and x["runtime"] == name]
+            if pts:
+                ax.plot([x["x"] for x in pts], [x["ms"] / 1000 for x in pts], style, color=colour, ms=3, lw=1, label=name)
         ax.set_xscale("log")
-        if series == "cases":
-            ax.set_yscale("log")
+        ax.set_yscale("log")
+        ax.xaxis.set_major_locator(FixedLocator(V6_TICKS[series]))
+        ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: tick(v)))
+        ax.xaxis.set_minor_locator(NullLocator())
+        ax.yaxis.set_major_locator(LogLocator(base=10))
+        ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+        ax.yaxis.set_minor_formatter(NullFormatter())
         ax.set_xlabel(xl)
-        ax.grid(alpha=0.3)
+        ax.grid(alpha=0.3, which="major")
     axes[0].set_ylabel("run time (s)")
-    fig.tight_layout()
+    if b:
+        axes[0].legend(frameon=False, loc="upper left")
+    fig.tight_layout(w_pad=1.5)
     fig.savefig(OUT / "v6_performance.pdf")
     big = max((x for x in r["rows"] if x["series"] == "cases"), key=lambda x: x["x"])
     macro("VsixMillion", f"{big['ms'] / 1000:.1f}")
     macro("VsixRate", f"{round(big['casesPerSecond'], -3):,.0f}".replace(",", "\\,"))
     macro("VsixCpu", r["cpu"].replace("(R)", "").replace("(TM)", "").strip())
     macro("VsixNode", r["node"])
+    if b:
+        macro("VsixReps", str(b["reps"]))
+        macro("VsixChromium", b["browsers"]["Chromium"])
+        macro("VsixFirefox", b["browsers"]["Firefox"])
+        macro("VsixMismatches", str(b["mismatches"]))
+        macro("VsixCompared", str(len(b["rows"])))
+        for name, key in [("Chromium", "Chromium"), ("Firefox", "Firefox")]:
+            m = max((x for x in b["rows"] if x["series"] == "cases" and x["runtime"] == name), key=lambda x: x["x"])
+            macro(f"VsixMillion{key}", f"{m['ms'] / 1000:.1f}")
+        ratios = [x["ms"] / next(y["ms"] for y in r["rows"] if y["series"] == x["series"] and y["x"] == x["x"]) for x in b["rows"]]
+        macro("VsixRatioMin", f"{min(ratios):.1f}")
+        macro("VsixRatioMax", f"{max(ratios):.1f}")
 
 
 for name, fn in [("v1", v1), ("v2", v2), ("v4", v4), ("v5", v5), ("v6", v6)]:

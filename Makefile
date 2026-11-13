@@ -22,6 +22,7 @@ simulator: $(CLI)
 env:
 	python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 	python3 -m venv .venv-simod && .venv-simod/bin/pip install simod==5.2.1
+	npm ci && npx playwright-core install chromium firefox
 
 experiments: v1 v2 v3 v4 v5 v6
 
@@ -39,6 +40,7 @@ v5: $(CLI)
 	node experiments/v5_decisions.mjs
 v6: $(CLI)
 	node experiments/v6_performance.mjs
+	node experiments/v6_browser.mjs
 
 figures:
 	$(PY) analysis/make_figures.py

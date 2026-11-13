@@ -30,7 +30,7 @@ All evaluations are automated; no human participants.
 | V3 | Does it work on real processes? | Simulation models discovered with Simod from public BPI Challenge logs (4TU), converted and simulated | Cycle-time distribution against the log; comparison with Prosimos on the same model |
 | V4 | Are the value stream figures correct? | Hand-computable cases (sequence, XOR with known probabilities, AND, loop with known rework rate); comparison with a linear value stream map | Exact agreement on deterministic cases; size of the error of the linear map on non-linear processes |
 | V5 | Does statistical comparison change decisions? | Scenario pairs with small true differences; single run versus replications with common random numbers | Share of single-run comparisons that pick the worse scenario; replications needed for a stable decision |
-| V6 | Is it fast enough for interactive use? | Run time and memory by model size, case count and replications, in Chrome, Firefox and Node | Scaling curves; time to first result while editing |
+| V6 | Is it fast enough for interactive use? | Run time by case count and model size, in Node and in a Web Worker in Chromium and Firefox on the same machine; identical results across runtimes for the same seeds | Scaling curves per runtime |
 | V7 | How does it compare with existing tools? | Feature comparison with BIMP, Prosimos, Apromore, Bizagi Modeler, Signavio, Camunda | Table based on documentation and trial versions, with access dates |
 
 Case study: the coffee-shop example and one BPI model, from what-if question to decision, including the value stream map.

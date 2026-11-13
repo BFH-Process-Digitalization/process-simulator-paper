@@ -17,7 +17,7 @@ Status: draft manuscript with first complete results (V1–V7). Not submitted.
 
 ## Reproduce
 
-Requirements: Node.js 20, Python 3.10 with `requirements.txt`, Simod 5.2.1 (installed by `make env`), and a LaTeX distribution with `elsarticle`.
+Requirements: Node.js 20, Python 3.10 with `requirements.txt`, Simod 5.2.1 and headless Chromium and Firefox through Playwright (installed by `make env`), and a LaTeX distribution with `elsarticle` and `apacite`.
 
 ```sh
 make simulator   # clone and build the simulator CLI into tools/process-simulator
