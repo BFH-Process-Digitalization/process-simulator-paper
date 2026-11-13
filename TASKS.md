@@ -2,20 +2,21 @@
 
 ## Decisions
 
-- [ ] Open-source licence for the simulator.
-- [ ] Indifference zone δ and probability of correct selection, after the pilot.
+- [x] Open-source licence for the simulator: Apache-2.0.
+- [x] Paper type and target: tool paper, SIMPAT.
 - [ ] Author list.
+- [ ] Open access or subscription route; confirm coverage with the BFH library.
 
 ## Work packages
 
-- [ ] Verify IF, open-access fee and code policy of IEEE Access and the alternatives
-- [ ] Verify licences of Prosimos and Simod assets
-- [ ] Simulator: headless batch runner over seed lists
-- [ ] Simulator: event-keyed random numbers
-- [ ] Simulator: ranking and selection, paired confidence intervals
-- [ ] Simulator: time-based warm-up and run metadata
-- [ ] Prosimos exporter for Tier B cross-checks
-- [ ] Instance generator, pilot with 6–8 instances
-- [ ] Tier A and Tier B ground truth with stability checks
-- [ ] E1–E3
-- [ ] Literature review with verified DOIs; repeat name check
+- [ ] Simulator: headless runner with JSONL output and run metadata
+- [ ] Simulator: separate random streams per source
+- [ ] Simulator: replications, confidence intervals, paired comparison
+- [ ] Simulator: time-based warm-up
+- [ ] Prosimos converter
+- [ ] Verify licences of Prosimos and Simod assets and BPI Challenge logs
+- [ ] V1 queueing verification, V4 value stream cases (as tests)
+- [ ] V2 Prosimos comparison, V3 BPI models
+- [ ] V5 decision experiment, V6 performance, V7 feature comparison
+- [ ] Case study
+- [ ] Literature review with verified DOIs
