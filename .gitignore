@@ -1,0 +1,16 @@
+tools/
+.venv/
+.venv-simod/
+data/raw/
+data/models/
+data/v3/simod/
+data/v3/bpic12w.csv
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.bbl
+paper/*.blg
+paper/*.spl
+__pycache__/
