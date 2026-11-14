@@ -2,8 +2,10 @@
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
+\usepackage{tabularx}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{placeins}
 \usepackage{xcolor}
 \newcommand{\doiprefix}{https://doi.org/}
 \usepackage[natbibapa]{apacite}
@@ -156,7 +158,7 @@ Seven models with closed-form lead time and partition were simulated with \Vfour
 
 \subsection{V5: single runs versus replications}
 \label{sec:v5}
-We return to the question that opened this paper: which option is best, and how often does one run per option answer it wrongly? We took two decision problems: the coffee-shop example (four alternatives to the baseline) and an office process with a baseline and four staffing and duration options. The reference ranking comes from an independent high-precision run: \VfiveRef{} replications per option in a seed block disjoint from the trials, so no replication contributes to both the reference and the evaluated decisions. In both problems the best option leads the runner-up by a clearly resolved margin (21.8\,\% and 9.8\,\% of mean cycle time). We then repeated, \VfiveN{} times, the decision ``pick the option with the lowest mean cycle time'', sweeping the budget from one run per option to groups of up to 50 paired replications; Table~\ref{tab:v5} reports the share of correct selections with Wilson intervals. With one run per option the answer is wrong in \VfiveCoffeeIndep{} of trials on the coffee shop and \VfiveOfficeIndep{} on the harder office problem when seeds are independent; on the office process, sharing random numbers reduces this to \VfiveOfficeKeyed{} with per-source streams and \VfiveOfficeSingle{} with a single shared stream, and on the coffee shop a single run with per-source streams is almost always right. Five paired replications already decide correctly in 99.5\,\% of office trials; with ten replications no wrong pick was observed (0 of \VfiveOfficeRepTrials{}, 95\,\% upper bound \VfiveOfficeRepUpper); the larger budgets rest on fewer trials and are correspondingly less precise. The paired confidence intervals of the tool never declared a wrong direction and returned ``not significant'' in at most \VfiveNs{} of the comparisons with the baseline. Table~\ref{tab:v5var} shows why: per-source streams reduce the variance of differences by up to a factor of \VfiveRatio{} compared with a single stream. For the coffee-shop owner of the introduction the lesson is twofold: comparing the options under the same random numbers already removes most wrong picks, because every option then sees the same customers and the same durations, and a handful of paired replications removes the rest; the confidence intervals then say when the evidence is insufficient instead of hiding it.
+We return to the question that opened this paper: which option is best, and how often does one run per option answer it wrongly? We took two decision problems: the coffee-shop example (four alternatives to the baseline) and an office process with a baseline and four staffing and duration options (Figure~\ref{fig:office} and Table~\ref{tab:office} give the office process and its scenarios, Figure~\ref{fig:coffeemodel} and Table~\ref{tab:coffee} the coffee shop). The reference ranking comes from an independent high-precision run: \VfiveRef{} replications per option in a seed block disjoint from the trials, so no replication contributes to both the reference and the evaluated decisions. In both problems the best option leads the runner-up by a clearly resolved margin (21.8\,\% and 9.8\,\% of mean cycle time). We then repeated, \VfiveN{} times, the decision ``pick the option with the lowest mean cycle time'', sweeping the budget from one run per option to groups of up to 50 paired replications; Table~\ref{tab:v5} reports the share of correct selections with Wilson intervals. With one run per option the answer is wrong in \VfiveCoffeeIndep{} of trials on the coffee shop and \VfiveOfficeIndep{} on the harder office problem when seeds are independent; on the office process, sharing random numbers reduces this to \VfiveOfficeKeyed{} with per-source streams and \VfiveOfficeSingle{} with a single shared stream, and on the coffee shop a single run with per-source streams is almost always right. Five paired replications already decide correctly in 99.5\,\% of office trials; with ten replications no wrong pick was observed (0 of \VfiveOfficeRepTrials{}, 95\,\% upper bound \VfiveOfficeRepUpper); the larger budgets rest on fewer trials and are correspondingly less precise. The paired confidence intervals of the tool never declared a wrong direction and returned ``not significant'' in at most \VfiveNs{} of the comparisons with the baseline. Table~\ref{tab:v5var} shows why: per-source streams reduce the variance of differences by up to a factor of \VfiveRatio{} compared with a single stream. For the coffee-shop owner of the introduction the lesson is twofold: comparing the options under the same random numbers already removes most wrong picks, because every option then sees the same customers and the same durations, and a handful of paired replications removes the rest; the confidence intervals then say when the evidence is insufficient instead of hiding it.
 
 \begin{table}[t]
 \centering\small
@@ -187,6 +189,7 @@ Run time measures the implementation on a given machine, not the tool as such: i
 \label{sec:v7}
 \input{v7}
 
+\FloatBarrier
 \section{Discussion and limitations}
 \label{sec:discussion}
 The verification covers steady-state queueing behaviour, the semantics shared with Prosimos and the VSM partition; it does not cover every BPMN construct the engine executes. Event-based gateways, inclusive gateways, multi-instance activities and boundary events are covered by unit tests but not by an external reference; conformance tests against externally defined traces are future work. The resource model is coarser than that of Prosimos: there are no individual resource calendars, no resource-specific durations, no batching and no prioritisation, so models discovered by Simod have to be approximated (Section~\ref{sec:v3}); the V3 result bounds but does not isolate the effect of these approximations. The tool reports confidence intervals and paired differences but leaves the choice among several significant options to the user; ranking-and-selection procedures \citep{kim2001} would be a natural extension. The decision experiment (V5) uses two decision problems; it demonstrates the effect of single runs under controlled conditions and is not a general estimate of error rates. The VSM categories depend on the value classes assigned by the modeller, the precedence rule for overlapping work is a design choice, and the reported PCE measures elapsed-time coverage rather than work-content share (Sections~\ref{sec:vsm}, \ref{sec:v4}). The hash-seeded random streams are deterministic; their independence is assumed, and structural scenario changes can desynchronise paired draws (Section~\ref{sec:stats}). No user study was conducted, so claims about usability are limited to the tool's availability in the browser and the modeller plugin.
@@ -196,9 +199,9 @@ The verification covers steady-state queueing behaviour, the semantics shared wi
 The question that opened this paper now has a defensible answer: a single run per scenario with independent random numbers often picks the wrong option; common random numbers remove most of these errors, and a few paired replications with confidence intervals remove the rest. \tool{} brings replicated, CRN-based scenario comparison and value stream figures for non-linear processes into a BPMN editor that runs in the browser and in the Camunda Modeler. The evaluation shows agreement with exact queueing results and with an independent engine, correct VSM figures for choices, parallel branches and loops, and a clear reduction of wrong decisions compared with single runs. The software, the experiments and the data are available under Apache-2.0.
 
 \section*{Software and data availability}
-\begin{itemize}\sloppy
-\item Software: \url{https://github.com/BFH-Process-Digitalization/process-simulator} (Apache-2.0); web application: \url{https://bfh-process-digitalization.github.io/process-simulator/}. The results reported here were produced with simulator release 1.0.1 (tag \texttt{v1.0.1}).
-\item Experiments, generated models, raw runs and this manuscript: \url{https://github.com/BFH-Process-Digitalization/process-simulator-paper}.
+\begin{itemize}\raggedright
+\item Software (Apache-2.0):\\* \url{https://github.com/BFH-Process-Digitalization/process-simulator}\\* Web application:\\* \url{https://bfh-process-digitalization.github.io/process-simulator/}\\* The results were produced with release 1.0.1 (tag \texttt{v1.0.1}).
+\item Experiments, generated models, raw runs and this manuscript:\\* \url{https://github.com/BFH-Process-Digitalization/process-simulator-paper}
 \item The BPI Challenge 2012 log is not redistributed; the scripts download it from 4TU.ResearchData \citep{bpic2012}.
 \end{itemize}
 
@@ -211,33 +214,87 @@ The author declares no competing interests.
 \section*{Declaration of generative AI and AI-assisted technologies in the writing process}
 During the preparation of this work the author used generative AI tools in order to draft and revise parts of the manuscript. After using these tools, the author reviewed and edited the content as needed and takes full responsibility for the content of the publication.
 
+\FloatBarrier
 \bibliographystyle{apacite}
 \bibliography{references}
 
+\clearpage
 \appendix
 \setcounter{figure}{0}
-\section{Test models}
+\setcounter{table}{0}
+\section{Test models and decision scenarios}
 \label{app:models}
-The BPMN models used in V1, V2, V4 and V5 are generated by the model builder in \url{experiments/lib/bpmn.mjs} and stored in the \texttt{models/} directory of the paper repository; Figure~\ref{fig:models} shows them as rendered by bpmn-js. The BPI Challenge 2012 model of Section~\ref{sec:v3} is discovered by Simod 5.2.1 from the event log and regenerated by \texttt{make v3}; it is too large to reproduce legibly here.
+The BPMN models used in V1, V2, V4 and V5 are generated by the model builder in \texttt{experiments/lib/bpmn.mjs} and stored in the \texttt{models/} directory of the paper repository. Figure~\ref{fig:models} shows them as rendered by bpmn-js; the sequence of three activities of V4 has the same structure as the office process of Figure~\ref{fig:office}, which Section~\ref{sec:v5} compares under the five scenarios of Table~\ref{tab:office}. Figure~\ref{fig:coffeemodel} shows the coffee-shop example shipped with the tool, whose stored scenarios Table~\ref{tab:coffee} lists as extracted from the model file. The BPI Challenge 2012 model of Section~\ref{sec:v3} is discovered by Simod 5.2.1 from the event log and regenerated by \texttt{make v3}; it is too large to reproduce legibly here.
 
-\begin{figure}[H]
-\centering
-\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/single-station}\\(a) single station (V1)\end{minipage}\hfill
-\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/tandem}\\(b) tandem of two stations (V1, V2, V4)\end{minipage}\\[1em]
-\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/three-step}\\(c) three-step sequence (V4, V5 office process)\end{minipage}\hfill
-\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/exclusive-choice}\\(d) exclusive choice (V2, V4)\end{minipage}\\[1em]
-\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/parallel-split}\\(e) parallel split (V2, V4)\end{minipage}\hfill
-\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/rework-loop}\\(f) rework loop, also the Jackson feedback network (V1, V2, V4)\end{minipage}\\[1em]
-\begin{minipage}{.48\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/composite}\\(g) choice + parallel pair + rework loop (V4)\end{minipage}
-\caption{Generated BPMN test models used in the experiments; sources in \texttt{models/}.}
+\begin{figure}[!b]
+\centering\footnotesize
+\begin{minipage}{.44\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/single-station}\\(a) single station (V1)\end{minipage}\hfill
+\begin{minipage}{.44\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/exclusive-choice}\\(b) exclusive choice (V2, V4)\end{minipage}\\[.3em]
+\begin{minipage}{.44\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/parallel-split}\\(c) parallel split (V2, V4)\end{minipage}\hfill
+\begin{minipage}{.44\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/rework-loop}\\(d) rework loop (V1, V2, V4)\end{minipage}\\[.3em]
+\begin{minipage}{.8\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/tandem}\\(e) tandem of two stations (V1, V2, V4)\end{minipage}\\[.3em]
+\begin{minipage}{.8\linewidth}\centering\includegraphics[width=\linewidth]{figures/models/composite}\\(f) choice + parallel pair + rework loop (V4)\end{minipage}
+\caption{Generated BPMN test models used in the experiments; sources in \texttt{models/}. The rework loop (d) is also the Jackson feedback network of V1.}
 \label{fig:models}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[p]
 \centering
-\includegraphics[width=\linewidth]{figures/models/coffee-shop}
-\caption{The coffee-shop example shipped with the tool, used in the Prosimos cross-check (V2) and the decision experiment (V5).}
+\includegraphics[width=.9\linewidth]{figures/models/office-process}
+\caption{The office process of the V5 decision experiment: three steps in sequence (task ids \texttt{t1}, \texttt{t2}, \texttt{t3}, served by roles \texttt{r1}, \texttt{r2}, \texttt{r3}); the same model builder produces the three-activity sequence of V4.}
+\label{fig:office}
+\end{figure}
+
+\begin{table}[p]
+\centering\small
+\caption{Office-process scenarios of V5 (Figure~\ref{fig:office}). Each run simulates 2000 cases with exponential inter-arrival times of mean 60\,s and exponential activity durations (means in seconds); staff counts give the number of resources of roles \texttt{r1}, \texttt{r2} and \texttt{r3} serving steps 1, 2 and 3.}
+\label{tab:office}
+\begin{tabular}{@{}lrrrl@{}}
+\toprule
+Option & Step 1 (s) & Step 2 (s) & Step 3 (s) & Staff 1/2/3 \\
+\midrule
+Baseline & 48 & 100 & 45 & 1/2/1 \\
+A: second person at step 1 & 48 & 100 & 45 & 2/2/1 \\
+B: step 2 10\,\% faster & 48 & 90 & 45 & 1/2/1 \\
+C: step 3 11\,\% faster & 48 & 100 & 40 & 1/2/1 \\
+D: second person at step 3 & 48 & 100 & 45 & 1/2/2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.9\linewidth]{figures/models/coffee-shop}
+\caption{The coffee-shop example shipped with the tool, used in the decision experiment (V5); Prosimos could not run it (Section~\ref{sec:v2}).}
 \label{fig:coffeemodel}
 \end{figure}
+
+\begin{table}[p]
+\centering\small
+\caption{Coffee-shop scenarios stored in the model file of Figure~\ref{fig:coffeemodel}, extracted from the embedded scenario block; all times in seconds. The variants list only the parameters they override.}
+\label{tab:coffee}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\multicolumn{2}{@{}l}{\emph{Baseline}}\\
+Arrival & exponential, mean 300\,s (one customer every 5\,min) \\
+Cases and horizon & at most 200 cases or a horizon of 28\,800\,s (8\,h) \\
+Start date, currency, seed & 2026-11-16, CHF, 42 \\
+Resources & Cashier 1 and Barista 1 (30 CHF/h each, 24/7) \\
+Taking Order & normal $120\pm30$\,s, Cashier; BVA, queue limit 5 \\
+Processing Payment & fixed 60\,s, Cashier; BVA \\
+Delivering Drink & normal $30\pm10$\,s, Cashier; NVA \\
+Preparing Basic Coffee & normal $180\pm60$\,s, Barista; VA, revenue 4 \\
+Preparing Special Coffee & normal $300\pm120$\,s, Barista; VA, revenue 6 \\
+Gateway ``Special Drink?'' & ``Yes'' (special) 0.3, ``No'' (basic) 0.7 \\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Variants (changes only)}}\\
+Customers every 3 min & arrival mean 180\,s \\
+Second barista & Barista count 2 \\
+Product mix 50/50 & branch probabilities 0.5 / 0.5 \\
+Every 3 min + second barista & arrival mean 180\,s; Barista count 2 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \end{document}

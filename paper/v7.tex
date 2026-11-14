@@ -1,11 +1,11 @@
-Table~\ref{tab:v7} positions \tool{} against two openly documented research tools that serve the same purpose, BIMP (the online front end of the QBP simulator) and Prosimos with Simod. Browser access alone is not the differentiator: both other tools can be reached through a web interface. What distinguishes \tool{} is the integration of modelling, simulation, replicated comparison and the value stream view in one browser application, and its particular statistical and VSM features. The entries for the other tools are taken from their public documentation (BIMP web site, Prosimos and Simod repositories, consulted in November 2026) and from the publications cited; ``not documented'' means that we did not find the feature described, not that it is absent. Commercial suites with simulation modules were not included because their feature sets could not be checked from public sources in a comparable way; surveys of such tools are available \citep{pereira2016,rosenthal2021}.
+Table~\ref{tab:v7} positions \tool{} against two openly documented research tools that serve the same purpose, BIMP (the online front end of the QBP simulator) and Prosimos with Simod. Browser access alone is not the differentiator: both other tools can be reached through a web interface. What distinguishes \tool{} is the integration of modelling, simulation, replicated comparison and the value stream view in one browser application, and its particular statistical and VSM features. The entries for Prosimos were checked against the source code of release 2.1.0, the latest at the time of writing (command-line options, simulation API and random-number generation), and against its web service; the entries for BIMP come from its public documentation and its open-source user interface, as the QBP engine itself is not published. All sources were consulted in November 2026. ``Not documented'' means that the feature appears neither in the documentation nor in the inspected code, not that it is absent. Commercial suites with simulation modules were not included because their feature sets could not be checked from public sources in a comparable way; surveys of such tools are available \citep{pereira2016,rosenthal2021}.
 
-\begin{table}[t]
+\begin{table}[!htbp]
 \centering\small
-\caption{V7: feature comparison based on public documentation.}
+\caption{V7: feature comparison based on public documentation and, for Prosimos, the source code of release 2.1.0.}
 \label{tab:v7}
-\resizebox{\linewidth}{!}{%
-\begin{tabular}{llll}
+\scriptsize
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.3cm}*{3}{>{\raggedright\arraybackslash}X}@{}}
 \toprule
 Feature & \tool{} & BIMP (QBP) & Prosimos / Simod \\
 \midrule
@@ -14,11 +14,11 @@ Integrated BPMN editor & yes (bpmn-js, Camunda Modeler plugin) & no, external mo
 Command-line / batch use & yes & not documented & yes \\
 Discovery from event logs & no (imports Simod output) & no & yes (Simod) \citep{camargo2020} \\
 Differentiated resources (individual calendars and durations) & no, roles & no & yes \citep{lopezpintado2022} \\
-Replications with confidence intervals & yes & not documented & not documented \\
-Common random numbers across scenarios & yes, per-source streams & not documented & not documented \\
-Paired scenario comparison & yes & not documented & not documented \\
+Replications with confidence intervals & yes & no; one run per simulation, no replication setting documented & no; one run per call, repeatable only by an external script \\
+Common random numbers across scenarios & yes, per-source streams & not documented; engine not published & no per-source streams; one global generator, seedable only from outside \\
+Paired scenario comparison & yes & no & no \\
 Value stream figures (VA/BVA/NVA, PCE) & yes, simulation-based & no & no \\
-Licence & Apache-2.0 & not documented & see repositories \\
+Licence & Apache-2.0 & user interface MIT; engine not published & engine: no licence file; web services Apache-2.0 \\
 \bottomrule
-\end{tabular}}
+\end{tabularx}
 \end{table}

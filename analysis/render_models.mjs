@@ -26,7 +26,17 @@ mkdirSync(TMP, { recursive: true })
 const generated = {
   'single-station': sequence(1), // V1: M/M/1, M/M/c, M/D/1, M/U/1, M/G/1
   tandem: sequence(2), // V1, V2, V4: two M/M/1 stations in series
-  'three-step': sequence(3), // V4 sequence, V5 office process
+  'office-process': model(
+    'office',
+    [
+      { id: 'start', type: 'start' },
+      { id: 't1', type: 'task', name: 'Step 1' },
+      { id: 't2', type: 'task', name: 'Step 2' },
+      { id: 't3', type: 'task', name: 'Step 3' },
+      { id: 'end', type: 'end' },
+    ],
+    [['start', 't1'], ['t1', 't2'], ['t2', 't3'], ['t3', 'end']],
+  ), // V5 office process: a three-step sequence like V4, task ids t1--t3
   'exclusive-choice': branches('xor'), // V2, V4
   'parallel-split': branches('and'), // V2, V4
   'rework-loop': loop(), // V1 Jackson feedback, V2, V4
