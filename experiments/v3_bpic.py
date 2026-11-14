@@ -95,7 +95,7 @@ def main():
         "VthreeLogCycle": f"{real['cycle_h']:.1f}",
         "VthreeOwnCycle": f"{own_c:.1f}",
         "VthreeProCycle": f"{pro_c:.1f}",
-        "VthreeDiff": f"{100 * (own_c - pro_c) / pro_c:+.1f}\\,\\%",
+        "VthreeDiff": f"${100 * (own_c - pro_c) / pro_c:+.1f}$\\,\\%",
         "VthreeApprox": str(len(notes)),
     }
     OUT.write_text(json.dumps(summary, indent=1, default=float))

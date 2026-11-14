@@ -26,28 +26,28 @@
   "approximated: W_Valideren aanvraag: 57 resource-specific durations merged into one gamma with the same mean and variance"
  ],
  "Prosimos:cycle_h": {
-  "mean": 3.3980822383151343,
-  "half": 0.06373511857536193
+  "mean": 3.420897292279561,
+  "half": 0.05298253546524819
  },
  "This tool:cycle_h": {
-  "mean": 3.419393889130654,
-  "half": 0.038389841519685046
+  "mean": 3.397783147941483,
+  "half": 0.0334303181452551
  },
  "Prosimos:events_per_case": {
-  "mean": 17.82102102102102,
-  "half": 0.061957773149986115
+  "mean": 17.859407683545616,
+  "half": 0.06513790257978834
  },
  "This tool:events_per_case": {
-  "mean": 17.875168271719996,
-  "half": 0.04854036637695561
+  "mean": 17.80393496945221,
+  "half": 0.059037977667354566
  },
- "table": "\\begin{tabular}{lrrr}\n\\toprule\nMeasure & Log & Prosimos & This tool \\\\\n\\midrule\nmean cycle time (h) & 252.02 & 3.40 $\\pm$ 0.06 & 3.42 $\\pm$ 0.04 \\\\\nwork items per case & 7.39 & 17.82 $\\pm$ 0.06 & 17.88 $\\pm$ 0.05 \\\\\n\\bottomrule\n\\end{tabular}\n",
+ "table": "\\begin{tabular}{lrrr}\n\\toprule\nMeasure & Log & Prosimos & This tool \\\\\n\\midrule\nmean cycle time (h) & 252.02 & 3.42 $\\pm$ 0.05 & 3.40 $\\pm$ 0.03 \\\\\nwork items per case & 7.39 & 17.86 $\\pm$ 0.07 & 17.80 $\\pm$ 0.06 \\\\\n\\bottomrule\n\\end{tabular}\n",
  "macros": {
   "VthreeCases": "9\\,657",
   "VthreeLogCycle": "252.0",
   "VthreeOwnCycle": "3.4",
   "VthreeProCycle": "3.4",
-  "VthreeDiff": "+0.6\\,\\%",
+  "VthreeDiff": "$-0.7$\\,\\%",
   "VthreeApprox": "8"
  }
 }
