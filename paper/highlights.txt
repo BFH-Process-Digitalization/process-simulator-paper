@@ -1,0 +1,5 @@
+Open-source BPMN simulator in the browser, as Camunda Modeler plugin and CLI
+Per-source random streams keep common random numbers aligned across scenarios
+Trace-based value stream figures partition lead time for branches and loops
+Engine reproduces exact queueing results and agrees closely with Prosimos
+One run per option picks wrongly in up to 44 % of trials; paired runs fix this
