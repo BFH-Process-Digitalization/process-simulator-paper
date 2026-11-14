@@ -1,0 +1,15 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>V6 browser benchmark</title>
+<script>
+  window.bench = (job) =>
+    new Promise((resolve, reject) => {
+      const w = new Worker('worker.js')
+      w.onmessage = (e) => {
+        w.terminate()
+        e.data.error ? reject(new Error(e.data.error)) : resolve(e.data.records)
+      }
+      w.onerror = (e) => reject(new Error(e.message))
+      w.postMessage(job)
+    })
+</script>

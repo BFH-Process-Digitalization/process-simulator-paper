@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="defs_office" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="office" isExecutable="false">
+    <bpmn:startEvent id="start" name="start">
+      <bpmn:outgoing>f1_start_t1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="t1" name="Step 1">
+      <bpmn:incoming>f1_start_t1</bpmn:incoming>
+      <bpmn:outgoing>f2_t1_t2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="t2" name="Step 2">
+      <bpmn:incoming>f2_t1_t2</bpmn:incoming>
+      <bpmn:outgoing>f3_t2_t3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="t3" name="Step 3">
+      <bpmn:incoming>f3_t2_t3</bpmn:incoming>
+      <bpmn:outgoing>f4_t3_end</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="end" name="end">
+      <bpmn:incoming>f4_t3_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1_start_t1" sourceRef="start" targetRef="t1" />
+    <bpmn:sequenceFlow id="f2_t1_t2" sourceRef="t1" targetRef="t2" />
+    <bpmn:sequenceFlow id="f3_t2_t3" sourceRef="t2" targetRef="t3" />
+    <bpmn:sequenceFlow id="f4_t3_end" sourceRef="t3" targetRef="end" />
+  </bpmn:process>
+</bpmn:definitions>

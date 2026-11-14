@@ -1,0 +1,37 @@
+version: 5
+common:
+  train_log_path: ../data/v3/bpic12w.csv
+  log_ids:
+    case: case_id
+    activity: activity
+    resource: resource
+    start_time: start_time
+    end_time: end_time
+  perform_final_evaluation: false
+  num_final_evaluations: 0
+  discover_data_attributes: false
+preprocessing:
+  multitasking: false
+  enable_time_concurrency_threshold: 0.5
+control_flow:
+  optimization_metric: two_gram_distance
+  num_iterations: 1
+  num_evaluations_per_iteration: 1
+  mining_algorithm: sm1
+  epsilon: 0.5
+  eta: 0.5
+  gateway_probabilities: discovery
+  replace_or_joins: true
+  prioritize_parallelism: true
+resource_model:
+  optimization_metric: circadian_emd
+  num_iterations: 1
+  num_evaluations_per_iteration: 1
+  discover_prioritization_rules: false
+  discover_batching_rules: false
+  resource_profiles:
+    discovery_type: differentiated_by_pool
+    granularity: 60
+    confidence: 0.1
+    support: 0.7
+    participation: 0.4

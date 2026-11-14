@@ -1,0 +1,280 @@
+{
+  "reps": 5,
+  "browsers": {
+    "Chromium": "136.0.7103.25",
+    "Firefox": "137.0"
+  },
+  "mismatches": 0,
+  "rows": [
+    {
+      "runtime": "Chromium",
+      "series": "cases",
+      "x": 1000,
+      "cases": 1000,
+      "ms": 7.200000047683716,
+      "casesPerSecond": 138888.88796906412,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "cases",
+      "x": 10000,
+      "cases": 10000,
+      "ms": 46.199999928474426,
+      "casesPerSecond": 216450.21678531874,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "cases",
+      "x": 100000,
+      "cases": 100000,
+      "ms": 655.1000000238419,
+      "casesPerSecond": 152648.4506126707,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "cases",
+      "x": 1000000,
+      "cases": 1000000,
+      "ms": 8730.899999976158,
+      "casesPerSecond": 114535.72942110559,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "sequence",
+      "x": 5,
+      "cases": 10000,
+      "ms": 295.1999999284744,
+      "casesPerSecond": 33875.33876159537,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "sequence",
+      "x": 10,
+      "cases": 10000,
+      "ms": 411.10000002384186,
+      "casesPerSecond": 24324.98175485295,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "sequence",
+      "x": 20,
+      "cases": 10000,
+      "ms": 864.4000000953674,
+      "casesPerSecond": 11568.718184748635,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "sequence",
+      "x": 50,
+      "cases": 10000,
+      "ms": 2228.7000000476837,
+      "casesPerSecond": 4486.920626278121,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "sequence",
+      "x": 100,
+      "cases": 10000,
+      "ms": 3703.399999976158,
+      "casesPerSecond": 2700.221418173672,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "sequence",
+      "x": 200,
+      "cases": 10000,
+      "ms": 7691.899999976158,
+      "casesPerSecond": 1300.0689036559234,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "parallel",
+      "x": 2,
+      "cases": 10000,
+      "ms": 65.19999992847443,
+      "casesPerSecond": 153374.23329708865,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "parallel",
+      "x": 5,
+      "cases": 10000,
+      "ms": 124.19999992847443,
+      "casesPerSecond": 80515.29795297023,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "parallel",
+      "x": 10,
+      "cases": 10000,
+      "ms": 239.20000004768372,
+      "casesPerSecond": 41806.02005855574,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "parallel",
+      "x": 20,
+      "cases": 10000,
+      "ms": 532.1999999284744,
+      "casesPerSecond": 18789.92860079662,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Chromium",
+      "series": "parallel",
+      "x": 50,
+      "cases": 10000,
+      "ms": 1522,
+      "casesPerSecond": 6570.302233902759,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "cases",
+      "x": 1000,
+      "cases": 1000,
+      "ms": 8,
+      "casesPerSecond": 125000,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "cases",
+      "x": 10000,
+      "cases": 10000,
+      "ms": 71,
+      "casesPerSecond": 140845.0704225352,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "cases",
+      "x": 100000,
+      "cases": 100000,
+      "ms": 821,
+      "casesPerSecond": 121802.6796589525,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "cases",
+      "x": 1000000,
+      "cases": 1000000,
+      "ms": 10829,
+      "casesPerSecond": 92344.63015975621,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "sequence",
+      "x": 5,
+      "cases": 10000,
+      "ms": 186,
+      "casesPerSecond": 53763.44086021505,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "sequence",
+      "x": 10,
+      "cases": 10000,
+      "ms": 350,
+      "casesPerSecond": 28571.428571428572,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "sequence",
+      "x": 20,
+      "cases": 10000,
+      "ms": 680,
+      "casesPerSecond": 14705.882352941177,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "sequence",
+      "x": 50,
+      "cases": 10000,
+      "ms": 1839,
+      "casesPerSecond": 5437.737901033171,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "sequence",
+      "x": 100,
+      "cases": 10000,
+      "ms": 4343,
+      "casesPerSecond": 2302.555836979047,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "sequence",
+      "x": 200,
+      "cases": 10000,
+      "ms": 12219,
+      "casesPerSecond": 818.3975775431704,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "parallel",
+      "x": 2,
+      "cases": 10000,
+      "ms": 125,
+      "casesPerSecond": 80000,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "parallel",
+      "x": 5,
+      "cases": 10000,
+      "ms": 223,
+      "casesPerSecond": 44843.04932735426,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "parallel",
+      "x": 10,
+      "cases": 10000,
+      "ms": 427,
+      "casesPerSecond": 23419.2037470726,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "parallel",
+      "x": 20,
+      "cases": 10000,
+      "ms": 927,
+      "casesPerSecond": 10787.486515641855,
+      "sameAsNode": true
+    },
+    {
+      "runtime": "Firefox",
+      "series": "parallel",
+      "x": 50,
+      "cases": 10000,
+      "ms": 2971,
+      "casesPerSecond": 3365.8700774150116,
+      "sameAsNode": true
+    }
+  ]
+}
